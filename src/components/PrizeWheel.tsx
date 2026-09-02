@@ -20,6 +20,8 @@ const PRIZES: readonly Prize[] = [
 ] as const;
 
 const WINNING_INDEX = 4;
+const TRY_AGAIN_INDEX = 7;
+const MAX_SPINS = 2;
 const SEGMENT = 360 / PRIZES.length;
 const SPIN_MS = 2000;
 const OFFER_SECONDS = 10 * 60;
@@ -63,9 +65,12 @@ export function PrizeWheel() {
   const [open, setOpen] = useState(false);
   const [spinning, setSpinning] = useState(false);
   const [won, setWon] = useState(false);
+  const [spins, setSpins] = useState(0);
+  const [tryAgain, setTryAgain] = useState(false);
   const [remaining, setRemaining] = useState(OFFER_SECONDS);
   const discRef = useRef<SVGSVGElement | null>(null);
   const spinAnimationRef = useRef<Animation | null>(null);
+  const rotationRef = useRef(0);
 
   // Abre imediatamente na chegada (clique no anúncio). Uma vez por sessão do navegador,
   // para não travar o usuário que já girou dentro da mesma navegação.
@@ -126,29 +131,41 @@ export function PrizeWheel() {
     if (!disc) return;
 
     setSpinning(true);
+    setTryAgain(false);
+    // 1º giro cai em "tente de novo"; o 2º entrega o prêmio.
+    const landingIndex = spins === 0 ? TRY_AGAIN_INDEX : WINNING_INDEX;
     // Pequeno desvio dentro da fatia para o giro não parecer calculado.
     const jitter = (Math.random() - 0.5) * (SEGMENT * 0.5);
-    const center = WINNING_INDEX * SEGMENT + SEGMENT / 2;
-    // Giro de 2s: 5 voltas completas com desaceleração suave até o prêmio.
-    const target = 360 * 5 + (360 - center) + jitter;
+    const center = landingIndex * SEGMENT + SEGMENT / 2;
+    // Giro de 2s: 5 voltas completas com desaceleração suave até a fatia alvo.
 
     // A Web Animations API mantém todos os quadros no compositor do navegador.
     // Assim, rerenders do React ou regras globais de transição não interrompem o giro.
+    // O 2º giro parte da posição em que o 1º parou, sem salto visual.
+    const from = rotationRef.current;
+    const delta = (((360 - center + jitter - from) % 360) + 360) % 360;
+    const to = from + 360 * 5 + delta;
     const animation = disc.animate(
-      [{ transform: "rotate(0deg)" }, { transform: `rotate(${target}deg)` }],
+      [{ transform: `rotate(${from}deg)` }, { transform: `rotate(${to}deg)` }],
       {
         duration: SPIN_MS,
         easing: "cubic-bezier(.12,.7,.08,1)",
         fill: "forwards",
       },
     );
+    rotationRef.current = to % 360;
     spinAnimationRef.current = animation;
     animation.onfinish = () => {
-      disc.style.transform = `rotate(${target % 360}deg)`;
+      disc.style.transform = `rotate(${to % 360}deg)`;
       animation.cancel();
       spinAnimationRef.current = null;
       setSpinning(false);
-      setWon(true);
+      if (landingIndex === TRY_AGAIN_INDEX) {
+        setSpins(1);
+        setTryAgain(true);
+      } else {
+        setWon(true);
+      }
     };
     animation.oncancel = () => {
       spinAnimationRef.current = null;
@@ -181,11 +198,15 @@ export function PrizeWheel() {
         </button>
 
         <span className="wheel-trust">✓ promoção oficial wepink</span>
-        <h2>{won ? "desconto liberado!" : "gire e garanta seu desconto"}</h2>
+        <h2>
+          {won ? "desconto liberado!" : tryAgain ? "quase! tente de novo" : "gire e garanta seu desconto"}
+        </h2>
         <p className="wheel-subtitle">
           {won
             ? "Aplicado automaticamente em todos os produtos da loja."
-            : "Um giro por visitante. O prêmio é aplicado direto no carrinho."}
+            : tryAgain
+              ? "Não foi dessa vez. Você ainda tem mais chances — gire novamente!"
+              : "Você tem 3 chances. O prêmio é aplicado direto no carrinho."}
         </p>
 
         <div className="wheel-stage">
@@ -249,7 +270,7 @@ export function PrizeWheel() {
           </>
         ) : (
           <button className="checkout-button" disabled={spinning} type="button" onClick={spin}>
-            {spinning ? "girando..." : "girar a roleta"}
+            {spinning ? "girando..." : tryAgain ? "girar novamente" : "girar a roleta"}
           </button>
         )}
 
