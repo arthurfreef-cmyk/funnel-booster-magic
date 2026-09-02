@@ -62,6 +62,7 @@ function CheckoutRoute() {
   const [cepFilled, setCepFilled] = useState(false);
   const [loading, setLoading] = useState(false);
   const [payment, setPayment] = useState<PixResult | null>(null);
+  const [cardOpen, setCardOpen] = useState(false);
   const numberRef = useRef<HTMLInputElement>(null);
   const cepAbortRef = useRef<AbortController | null>(null);
   const bumpAdded = items.some((item) => item.slug === ORDER_BUMP.slug);
