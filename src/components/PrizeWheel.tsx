@@ -70,6 +70,7 @@ export function PrizeWheel() {
   const [remaining, setRemaining] = useState(OFFER_SECONDS);
   const discRef = useRef<SVGSVGElement | null>(null);
   const spinAnimationRef = useRef<Animation | null>(null);
+  const rotationRef = useRef(0);
 
   // Abre imediatamente na chegada (clique no anúncio). Uma vez por sessão do navegador,
   // para não travar o usuário que já girou dentro da mesma navegação.
@@ -136,8 +137,7 @@ export function PrizeWheel() {
     // Pequeno desvio dentro da fatia para o giro não parecer calculado.
     const jitter = (Math.random() - 0.5) * (SEGMENT * 0.5);
     const center = landingIndex * SEGMENT + SEGMENT / 2;
-    // Giro de 2s: 5 voltas completas com desaceleração suave até o prêmio.
-    const target = 360 * 5 + (360 - center) + jitter;
+    // Giro de 2s: 5 voltas completas com desaceleração suave até a fatia alvo.
 
     // A Web Animations API mantém todos os quadros no compositor do navegador.
     // Assim, rerenders do React ou regras globais de transição não interrompem o giro.
