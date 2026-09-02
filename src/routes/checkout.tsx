@@ -52,7 +52,7 @@ const EMPTY: FormState = {
 };
 
 function CheckoutRoute() {
-  const { items, subtotal, shipping, total, add, clear, hydrated } = useCart();
+  const { items, subtotal, shipping, add, clear, hydrated } = useCart();
   const navigate = useNavigate();
   const [form, setForm] = useState<FormState>(EMPTY);
   const [error, setError] = useState<string | null>(null);
@@ -505,7 +505,7 @@ function CheckoutRoute() {
       </div>
 
       {payment && (
-        <PixModal amount={total} payment={payment} onClose={() => setPayment(null)} onPaid={onPaid} />
+        <PixModal amount={effectiveTotal} payment={payment} onClose={() => setPayment(null)} onPaid={onPaid} />
       )}
     </div>
 
