@@ -109,11 +109,30 @@ export function CartDrawer() {
                   <span>Subtotal</span>
                   <span>{formatPrice(subtotal)}</span>
                 </p>
-                {simulated ? (
-                  <p>
-                    <span>Frete</span>
-                    <span>{formatPrice(shipping)}</span>
-                  </p>
+                {simulated && address ? (
+                  <>
+                    <p>
+                      <span>Frete</span>
+                      <span>{formatPrice(shipping)}</span>
+                    </p>
+                    <div className="cart-shipping-address">
+                      <strong>entrega em</strong>
+                      <span>
+                        {[address.street, address.district].filter(Boolean).join(", ")}
+                        {address.street || address.district ? <br /> : null}
+                        {address.city} - {address.state} · CEP {address.zip}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAddress(null);
+                          setZip("");
+                        }}
+                      >
+                        alterar CEP
+                      </button>
+                    </div>
+                  </>
                 ) : (
                   <form className="cart-shipping-sim" onSubmit={simulate}>
                     <label htmlFor="cart-zip">simular frete</label>
@@ -124,10 +143,13 @@ export function CartDrawer() {
                         maxLength={9}
                         placeholder="00000-000"
                         value={zip}
-                        onChange={(event) => setZip(event.target.value)}
+                        onChange={(event) => onZipChange(event.target.value)}
                       />
-                      <button type="submit">ok</button>
+                      <button disabled={zipLoading} type="submit">
+                        {zipLoading ? "…" : "ok"}
+                      </button>
                     </div>
+                    {zipError && <em className="cart-shipping-error">{zipError}</em>}
                   </form>
                 )}
                 <p className="cart-summary-total">
