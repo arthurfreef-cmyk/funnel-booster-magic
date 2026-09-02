@@ -1,8 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Bolt, Loader2, RefreshCcw, ShieldCheck } from "lucide-react";
-import { useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 
+import { CardModal } from "@/components/CardModal";
 import { PixModal } from "@/components/PixModal";
+import { readAddress, saveAddress } from "@/lib/shipping-address";
 import { ORDER_BUMP } from "@/data/site";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/format";
@@ -60,9 +62,29 @@ function CheckoutRoute() {
   const [cepFilled, setCepFilled] = useState(false);
   const [loading, setLoading] = useState(false);
   const [payment, setPayment] = useState<PixResult | null>(null);
+  const [cardOpen, setCardOpen] = useState(false);
   const numberRef = useRef<HTMLInputElement>(null);
   const cepAbortRef = useRef<AbortController | null>(null);
   const bumpAdded = items.some((item) => item.slug === ORDER_BUMP.slug);
+
+  // Reaproveita o CEP/endereço simulado no carrinho.
+  useEffect(() => {
+    const saved = readAddress();
+    if (!saved) return;
+    setForm((current) =>
+      current.zip
+        ? current
+        : {
+            ...current,
+            zip: saved.zip,
+            street: saved.street,
+            district: saved.district,
+            city: saved.city,
+            state: saved.state,
+          },
+    );
+    setCepFilled(true);
+  }, []);
 
   /** Método de pagamento: PIX tem preço promocional; cartão volta ao preço normal. */
   const [method, setMethod] = useState<"pix" | "card">("pix");
@@ -140,6 +162,13 @@ function CheckoutRoute() {
         state: data.uf ?? current.state,
       }));
       setCepFilled(true);
+      saveAddress({
+        zip: `${cep.slice(0, 5)}-${cep.slice(5)}`,
+        street: data.logradouro ?? "",
+        district: data.bairro ?? "",
+        city: data.localidade ?? "",
+        state: data.uf ?? "",
+      });
       // Leva o cliente direto ao campo que falta: número.
       numberRef.current?.focus();
     } catch {
@@ -177,9 +206,7 @@ function CheckoutRoute() {
     event.preventDefault();
     if (!validate() || loading) return;
     if (method === "card") {
-      setError(
-        "O pagamento com cartão está em configuração. Aproveite o preço promocional pagando no PIX.",
-      );
+      setCardOpen(true);
       return;
     }
     trackInitiateCheckout(effectiveTotal, items);
@@ -503,6 +530,8 @@ function CheckoutRoute() {
           </ul>
         </aside>
       </div>
+
+      {cardOpen && <CardModal amount={effectiveTotal} onClose={() => setCardOpen(false)} />}
 
       {payment && (
         <PixModal amount={effectiveTotal} payment={payment} onClose={() => setPayment(null)} onPaid={onPaid} />

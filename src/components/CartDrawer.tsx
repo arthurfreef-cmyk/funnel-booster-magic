@@ -4,19 +4,44 @@ import { useState, type FormEvent } from "react";
 import { CART_ICON } from "@/data/site";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/format";
+import { lookupZip, saveAddress, type SavedAddress } from "@/lib/shipping-address";
 
 /** Mini-cesta lateral, aberta ao adicionar um produto. */
 export function CartDrawer() {
   const { items, drawerOpen, closeDrawer, setQuantity, remove, subtotal, shipping } = useCart();
   const [zip, setZip] = useState("");
-  const [simulated, setSimulated] = useState(false);
+  const [address, setAddress] = useState<SavedAddress | null>(null);
+  const [zipLoading, setZipLoading] = useState(false);
+  const [zipError, setZipError] = useState<string | null>(null);
+  const simulated = address !== null;
 
   const total = subtotal + (simulated ? shipping : 0);
 
-  const simulate = (event: FormEvent<HTMLFormElement>) => {
+  const onZipChange = (value: string) => {
+    const d = value.replace(/\D/g, "").slice(0, 8);
+    setZip(d.length > 5 ? `${d.slice(0, 5)}-${d.slice(5)}` : d);
+    setZipError(null);
+  };
+
+  const simulate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (zip.replace(/\D/g, "").length !== 8) return;
-    setSimulated(true);
+    const digits = zip.replace(/\D/g, "");
+    if (digits.length !== 8 || zipLoading) return;
+    setZipLoading(true);
+    setZipError(null);
+    try {
+      const found = await lookupZip(digits);
+      if (!found) {
+        setZipError("CEP não encontrado. Confira e tente novamente.");
+        return;
+      }
+      setAddress(found);
+      saveAddress(found);
+    } catch {
+      setZipError("Não foi possível consultar o CEP agora.");
+    } finally {
+      setZipLoading(false);
+    }
   };
 
   if (!drawerOpen) return null;
@@ -84,11 +109,30 @@ export function CartDrawer() {
                   <span>Subtotal</span>
                   <span>{formatPrice(subtotal)}</span>
                 </p>
-                {simulated ? (
-                  <p>
-                    <span>Frete</span>
-                    <span>{formatPrice(shipping)}</span>
-                  </p>
+                {simulated && address ? (
+                  <>
+                    <p>
+                      <span>Frete</span>
+                      <span>{formatPrice(shipping)}</span>
+                    </p>
+                    <div className="cart-shipping-address">
+                      <strong>entrega em</strong>
+                      <span>
+                        {[address.street, address.district].filter(Boolean).join(", ")}
+                        {address.street || address.district ? <br /> : null}
+                        {address.city} - {address.state} · CEP {address.zip}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAddress(null);
+                          setZip("");
+                        }}
+                      >
+                        alterar CEP
+                      </button>
+                    </div>
+                  </>
                 ) : (
                   <form className="cart-shipping-sim" onSubmit={simulate}>
                     <label htmlFor="cart-zip">simular frete</label>
@@ -99,10 +143,13 @@ export function CartDrawer() {
                         maxLength={9}
                         placeholder="00000-000"
                         value={zip}
-                        onChange={(event) => setZip(event.target.value)}
+                        onChange={(event) => onZipChange(event.target.value)}
                       />
-                      <button type="submit">ok</button>
+                      <button disabled={zipLoading} type="submit">
+                        {zipLoading ? "…" : "ok"}
+                      </button>
                     </div>
+                    {zipError && <em className="cart-shipping-error">{zipError}</em>}
                   </form>
                 )}
                 <p className="cart-summary-total">
