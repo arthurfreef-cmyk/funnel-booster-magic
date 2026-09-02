@@ -121,6 +121,7 @@ function CheckoutRoute() {
         city: data.localidade ?? current.city,
         state: data.uf ?? current.state,
       }));
+      setCepFilled(true);
       // Leva o cliente direto ao campo que falta: número.
       numberRef.current?.focus();
     } catch {
@@ -233,11 +234,23 @@ function CheckoutRoute() {
               <div className="checkout-field-row city-state">
                 <label>
                   <span>CPF</span>
-                  <input inputMode="numeric" value={form.document} onChange={update("document")} />
+                  <input
+                    autoComplete="off"
+                    inputMode="numeric"
+                    placeholder="000.000.000-00"
+                    value={form.document}
+                    onChange={onCpfChange}
+                  />
                 </label>
                 <label>
-                  <span>DDD+tel</span>
-                  <input inputMode="tel" value={form.phone} onChange={update("phone")} />
+                  <span>celular com DDD</span>
+                  <input
+                    autoComplete="tel-national"
+                    inputMode="tel"
+                    placeholder="(00) 00000-0000"
+                    value={form.phone}
+                    onChange={onPhoneChange}
+                  />
                 </label>
               </div>
             </section>
@@ -262,7 +275,12 @@ function CheckoutRoute() {
               </label>
               <label>
                 <span>rua</span>
-                <input autoComplete="address-line1" value={form.street} onChange={update("street")} />
+                <input
+                  autoComplete="address-line1"
+                  className={cepFilled ? "autofilled" : undefined}
+                  value={form.street}
+                  onChange={update("street")}
+                />
               </label>
               <div className="checkout-field-row number-complement">
                 <label>
@@ -276,16 +294,32 @@ function CheckoutRoute() {
               </div>
               <label>
                 <span>bairro</span>
-                <input autoComplete="address-level3" value={form.district} onChange={update("district")} />
+                <input
+                  autoComplete="address-level3"
+                  className={cepFilled ? "autofilled" : undefined}
+                  value={form.district}
+                  onChange={update("district")}
+                />
               </label>
               <div className="checkout-field-row city-state">
                 <label>
                   <span>cidade</span>
-                  <input autoComplete="address-level2" value={form.city} onChange={update("city")} />
+                  <input
+                    autoComplete="address-level2"
+                    className={cepFilled ? "autofilled" : undefined}
+                    value={form.city}
+                    onChange={update("city")}
+                  />
                 </label>
                 <label>
                   <span>UF</span>
-                  <input autoComplete="address-level1" maxLength={2} value={form.state} onChange={update("state")} />
+                  <input
+                    autoComplete="address-level1"
+                    className={cepFilled ? "autofilled" : undefined}
+                    maxLength={2}
+                    value={form.state}
+                    onChange={update("state")}
+                  />
                 </label>
               </div>
             </section>
