@@ -145,7 +145,6 @@ export function PrizeWheel() {
     const from = rotationRef.current;
     const delta = (((360 - center + jitter - from) % 360) + 360) % 360;
     const to = from + 360 * 5 + delta;
-    void target;
     const animation = disc.animate(
       [{ transform: `rotate(${from}deg)` }, { transform: `rotate(${to}deg)` }],
       {
