@@ -53,6 +53,7 @@ function CheckoutRoute() {
   const [form, setForm] = useState<FormState>(EMPTY);
   const [error, setError] = useState<string | null>(null);
   const [cepLoading, setCepLoading] = useState(false);
+  const [cepFilled, setCepFilled] = useState(false);
   const numberRef = useRef<HTMLInputElement>(null);
   const cepAbortRef = useRef<AbortController | null>(null);
   const bumpAdded = items.some((item) => item.slug === ORDER_BUMP.slug);
@@ -65,7 +66,30 @@ function CheckoutRoute() {
     const digits = event.target.value.replace(/\D/g, "").slice(0, 8);
     const masked = digits.length > 5 ? `${digits.slice(0, 5)}-${digits.slice(5)}` : digits;
     setForm((current) => ({ ...current, zip: masked }));
+    setCepFilled(false);
     if (digits.length === 8) void lookupCep(digits);
+  };
+
+  /** Máscara de CPF: 000.000.000-00. */
+  const onCpfChange = (event: { target: { value: string } }) => {
+    const d = event.target.value.replace(/\D/g, "").slice(0, 11);
+    const masked = d
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
+      .replace(/(\d{3})\.(\d{3})\.(\d{3})(\d{1,2})/, "$1.$2.$3-$4");
+    setForm((current) => ({ ...current, document: masked }));
+  };
+
+  /** Máscara de telefone: (00) 00000-0000. */
+  const onPhoneChange = (event: { target: { value: string } }) => {
+    const d = event.target.value.replace(/\D/g, "").slice(0, 11);
+    const masked =
+      d.length > 6
+        ? `(${d.slice(0, 2)}) ${d.slice(2, d.length > 10 ? 7 : 6)}-${d.slice(d.length > 10 ? 7 : 6)}`
+        : d.length > 2
+          ? `(${d.slice(0, 2)}) ${d.slice(2)}`
+          : d;
+    setForm((current) => ({ ...current, phone: masked }));
   };
 
   /** Consulta o ViaCEP e preenche rua, bairro, cidade e UF automaticamente. */
@@ -97,6 +121,7 @@ function CheckoutRoute() {
         city: data.localidade ?? current.city,
         state: data.uf ?? current.state,
       }));
+      setCepFilled(true);
       // Leva o cliente direto ao campo que falta: número.
       numberRef.current?.focus();
     } catch {
@@ -200,20 +225,32 @@ function CheckoutRoute() {
               </div>
               <label>
                 <span>nome completo</span>
-                <input autoComplete="name" value={form.name} onChange={update("name")} />
+                <input autoComplete="name" placeholder="Seu nome completo" value={form.name} onChange={update("name")} />
               </label>
               <label>
                 <span>e-mail</span>
-                <input autoComplete="email" type="email" value={form.email} onChange={update("email")} />
+                <input autoComplete="email" placeholder="voce@email.com" type="email" value={form.email} onChange={update("email")} />
               </label>
               <div className="checkout-field-row city-state">
                 <label>
                   <span>CPF</span>
-                  <input inputMode="numeric" value={form.document} onChange={update("document")} />
+                  <input
+                    autoComplete="off"
+                    inputMode="numeric"
+                    placeholder="000.000.000-00"
+                    value={form.document}
+                    onChange={onCpfChange}
+                  />
                 </label>
                 <label>
-                  <span>DDD+tel</span>
-                  <input inputMode="tel" value={form.phone} onChange={update("phone")} />
+                  <span>celular com DDD</span>
+                  <input
+                    autoComplete="tel-national"
+                    inputMode="tel"
+                    placeholder="(00) 00000-0000"
+                    value={form.phone}
+                    onChange={onPhoneChange}
+                  />
                 </label>
               </div>
             </section>
@@ -238,30 +275,51 @@ function CheckoutRoute() {
               </label>
               <label>
                 <span>rua</span>
-                <input autoComplete="address-line1" value={form.street} onChange={update("street")} />
+                <input
+                  autoComplete="address-line1"
+                  className={cepFilled ? "autofilled" : undefined}
+                  value={form.street}
+                  onChange={update("street")}
+                />
               </label>
               <div className="checkout-field-row number-complement">
                 <label>
                   <span>número</span>
-                  <input ref={numberRef} value={form.number} onChange={update("number")} />
+                  <input ref={numberRef} inputMode="numeric" placeholder="123" value={form.number} onChange={update("number")} />
                 </label>
                 <label>
                   <span>complemento</span>
-                  <input value={form.complement} onChange={update("complement")} />
+                  <input placeholder="opcional" value={form.complement} onChange={update("complement")} />
                 </label>
               </div>
               <label>
                 <span>bairro</span>
-                <input autoComplete="address-level3" value={form.district} onChange={update("district")} />
+                <input
+                  autoComplete="address-level3"
+                  className={cepFilled ? "autofilled" : undefined}
+                  value={form.district}
+                  onChange={update("district")}
+                />
               </label>
               <div className="checkout-field-row city-state">
                 <label>
                   <span>cidade</span>
-                  <input autoComplete="address-level2" value={form.city} onChange={update("city")} />
+                  <input
+                    autoComplete="address-level2"
+                    className={cepFilled ? "autofilled" : undefined}
+                    value={form.city}
+                    onChange={update("city")}
+                  />
                 </label>
                 <label>
                   <span>UF</span>
-                  <input autoComplete="address-level1" maxLength={2} value={form.state} onChange={update("state")} />
+                  <input
+                    autoComplete="address-level1"
+                    className={cepFilled ? "autofilled" : undefined}
+                    maxLength={2}
+                    value={form.state}
+                    onChange={update("state")}
+                  />
                 </label>
               </div>
             </section>
