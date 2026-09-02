@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Bolt, RefreshCcw, ShieldCheck } from "lucide-react";
 import { useRef, useState, type FormEvent } from "react";
 
 import { PixButton } from "@/components/PixButton";
@@ -58,7 +59,6 @@ function CheckoutRoute() {
   const numberRef = useRef<HTMLInputElement>(null);
   const cepAbortRef = useRef<AbortController | null>(null);
   const bumpAdded = items.some((item) => item.slug === ORDER_BUMP.slug);
-  const savings = items.reduce((sum, item) => sum + (item.listPrice - item.price) * item.quantity, 0);
 
   const update = (key: keyof FormState) => (event: { target: { value: string } }) =>
     setForm((current) => ({ ...current, [key]: event.target.value }));
@@ -379,12 +379,6 @@ function CheckoutRoute() {
             <span>Subtotal</span>
             <span>{formatPrice(subtotal)}</span>
           </p>
-          {savings > 0 && (
-            <p className="summary-savings">
-              <span>você economiza</span>
-              <span>-{formatPrice(savings)}</span>
-            </p>
-          )}
           <p>
             <span>Frete</span>
             <span>{formatPrice(shipping)}</span>
@@ -393,12 +387,20 @@ function CheckoutRoute() {
             <span>Total</span>
             <strong>{formatPrice(total)}</strong>
           </div>
-          <p className="summary-installments">ou em até 6x de {formatPrice(total / 6)} sem juros</p>
 
           <ul className="summary-trust">
-            <li><span aria-hidden>⚡</span> pix com aprovação imediata</li>
-            <li><span aria-hidden>🔒</span> compra 100% segura</li>
-            <li><span aria-hidden>↩</span> troca fácil em até 7 dias</li>
+            <li>
+              <Bolt aria-hidden size={18} />
+              <span>pix com aprovação imediata</span>
+            </li>
+            <li>
+              <ShieldCheck aria-hidden size={18} />
+              <span>compra 100% segura</span>
+            </li>
+            <li>
+              <RefreshCcw aria-hidden size={18} />
+              <span>troca fácil em até 7 dias</span>
+            </li>
           </ul>
         </aside>
       </div>
