@@ -6,3 +6,4 @@
 - [x] Segredos BUCKPAY_TOKEN e BUCKPAY_USER_AGENT salvos e validados
 
 - [x] Carrinho: frete só aparece após simular CEP
+- [x] Seletor PIX (promo) vs cartão (preço normal) com aviso

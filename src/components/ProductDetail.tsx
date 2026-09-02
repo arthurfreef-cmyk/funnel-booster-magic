@@ -146,7 +146,35 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
       <section className="product-about">
         <h2>sobre o produto</h2>
-        <p>{product.fullDescription ?? product.description}</p>
+        <p className="about-lead">{product.fullDescription ?? product.description}</p>
+
+        <div className="about-highlights">
+          <div className="about-highlight">
+            <span aria-hidden="true">✦</span>
+            <strong>fragrância marcante</strong>
+            <p>{product.description}</p>
+          </div>
+          <div className="about-highlight">
+            <span aria-hidden="true">✦</span>
+            <strong>produto original</strong>
+            <p>fabricado pela wepink, com qualidade garantida e lacre de fábrica</p>
+          </div>
+          <div className="about-highlight">
+            <span aria-hidden="true">✦</span>
+            <strong>entrega em todo o brasil</strong>
+            <p>compre no conforto de casa e receba com rastreio e segurança</p>
+          </div>
+        </div>
+
+        <div className="about-usage">
+          <h3>como usar</h3>
+          <p>
+            Aplique sobre a pele limpa e seca, em regiões de maior circulação como pulsos, pescoço e
+            atrás das orelhas, para uma fixação prolongada. Reaplique ao longo do dia sempre que
+            quiser reforçar a fragrância. Uso externo; evite contato com os olhos e mantenha fora
+            do alcance de crianças.
+          </p>
+        </div>
       </section>
 
       {related.length > 0 && (
