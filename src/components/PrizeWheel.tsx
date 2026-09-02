@@ -198,11 +198,15 @@ export function PrizeWheel() {
         </button>
 
         <span className="wheel-trust">✓ promoção oficial wepink</span>
-        <h2>{won ? "desconto liberado!" : "gire e garanta seu desconto"}</h2>
+        <h2>
+          {won ? "desconto liberado!" : tryAgain ? "quase! tente de novo" : "gire e garanta seu desconto"}
+        </h2>
         <p className="wheel-subtitle">
           {won
             ? "Aplicado automaticamente em todos os produtos da loja."
-            : "Um giro por visitante. O prêmio é aplicado direto no carrinho."}
+            : tryAgain
+              ? "Não foi dessa vez. Você ainda tem mais chances — gire novamente!"
+              : "Você tem 3 chances. O prêmio é aplicado direto no carrinho."}
         </p>
 
         <div className="wheel-stage">
