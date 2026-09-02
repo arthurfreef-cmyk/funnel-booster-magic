@@ -15,6 +15,7 @@ import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ObrigadoRouteImport } from './routes/obrigado'
 import { Route as SlugIndexRouteImport } from './routes/$slug.index'
 import { Route as SlugPRouteImport } from './routes/$slug.p'
+import { Route as ApiPublicMasterfyWebhookRouteImport } from './routes/api/public/masterfy-webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,6 +47,12 @@ const SlugPRoute = SlugPRouteImport.update({
   path: '/$slug/p',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicMasterfyWebhookRoute =
+  ApiPublicMasterfyWebhookRouteImport.update({
+    id: '/api/public/masterfy-webhook',
+    path: '/api/public/masterfy-webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByFullPath {
   '/obrigado': typeof ObrigadoRoute
   '/$slug/p': typeof SlugPRoute
   '/$slug/': typeof SlugIndexRoute
+  '/api/public/masterfy-webhook': typeof ApiPublicMasterfyWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +70,7 @@ export interface FileRoutesByTo {
   '/obrigado': typeof ObrigadoRoute
   '/$slug/p': typeof SlugPRoute
   '/$slug': typeof SlugIndexRoute
+  '/api/public/masterfy-webhook': typeof ApiPublicMasterfyWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,12 +80,27 @@ export interface FileRoutesById {
   '/obrigado': typeof ObrigadoRoute
   '/$slug/p': typeof SlugPRoute
   '/$slug/': typeof SlugIndexRoute
+  '/api/public/masterfy-webhook': typeof ApiPublicMasterfyWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/busca' | '/checkout' | '/obrigado' | '/$slug/p' | '/$slug/'
+  fullPaths:
+    | '/'
+    | '/busca'
+    | '/checkout'
+    | '/obrigado'
+    | '/$slug/p'
+    | '/$slug/'
+    | '/api/public/masterfy-webhook'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/busca' | '/checkout' | '/obrigado' | '/$slug/p' | '/$slug'
+  to:
+    | '/'
+    | '/busca'
+    | '/checkout'
+    | '/obrigado'
+    | '/$slug/p'
+    | '/$slug'
+    | '/api/public/masterfy-webhook'
   id:
     | '__root__'
     | '/'
@@ -85,6 +109,7 @@ export interface FileRouteTypes {
     | '/obrigado'
     | '/$slug/p'
     | '/$slug/'
+    | '/api/public/masterfy-webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -94,6 +119,7 @@ export interface RootRouteChildren {
   ObrigadoRoute: typeof ObrigadoRoute
   SlugPRoute: typeof SlugPRoute
   SlugIndexRoute: typeof SlugIndexRoute
+  ApiPublicMasterfyWebhookRoute: typeof ApiPublicMasterfyWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -140,6 +166,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SlugPRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/masterfy-webhook': {
+      id: '/api/public/masterfy-webhook'
+      path: '/api/public/masterfy-webhook'
+      fullPath: '/api/public/masterfy-webhook'
+      preLoaderRoute: typeof ApiPublicMasterfyWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -150,6 +183,7 @@ const rootRouteChildren: RootRouteChildren = {
   ObrigadoRoute: ObrigadoRoute,
   SlugPRoute: SlugPRoute,
   SlugIndexRoute: SlugIndexRoute,
+  ApiPublicMasterfyWebhookRoute: ApiPublicMasterfyWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

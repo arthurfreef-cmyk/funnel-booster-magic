@@ -1,11 +1,14 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Bolt, RefreshCcw, ShieldCheck } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Bolt, Loader2, RefreshCcw, ShieldCheck } from "lucide-react";
 import { useRef, useState, type FormEvent } from "react";
 
+import { PixModal } from "@/components/PixModal";
 import { ORDER_BUMP } from "@/data/site";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/format";
-import { trackInitiateCheckout } from "@/lib/pixels";
+import { createPixPayment, type PixResult } from "@/lib/pix.functions";
+import { trackInitiateCheckout, trackPurchase } from "@/lib/pixels";
+
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
@@ -49,14 +52,18 @@ const EMPTY: FormState = {
 };
 
 function CheckoutRoute() {
-  const { items, subtotal, shipping, total, add, hydrated } = useCart();
+  const { items, subtotal, shipping, total, add, clear, hydrated } = useCart();
+  const navigate = useNavigate();
   const [form, setForm] = useState<FormState>(EMPTY);
   const [error, setError] = useState<string | null>(null);
   const [cepLoading, setCepLoading] = useState(false);
   const [cepFilled, setCepFilled] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [payment, setPayment] = useState<PixResult | null>(null);
   const numberRef = useRef<HTMLInputElement>(null);
   const cepAbortRef = useRef<AbortController | null>(null);
   const bumpAdded = items.some((item) => item.slug === ORDER_BUMP.slug);
+
 
   const update = (key: keyof FormState) => (event: { target: { value: string } }) =>
     setForm((current) => ({ ...current, [key]: event.target.value }));
@@ -144,15 +151,63 @@ function CheckoutRoute() {
       setError("Confira nome, e-mail e CPF antes de continuar.");
       return false;
     }
+    if (form.phone.replace(/\D/g, "").length < 10) {
+      setError("Informe um celular válido com DDD.");
+      return false;
+    }
+    if (!cepFilled || !form.street.trim() || !form.number.trim() || !form.city.trim() || !form.state.trim()) {
+      setError("Complete o endereço de entrega (CEP e número).");
+      return false;
+    }
     return true;
   };
 
-  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!validate()) return;
+    if (!validate() || loading) return;
     trackInitiateCheckout(total, items);
-    setError("Pagamento em configuração. Em breve você poderá concluir seu pedido.");
+    setLoading(true);
+    try {
+      const result = await createPixPayment({
+        data: {
+          amount: total,
+          shipping,
+          payer: {
+            name: form.name,
+            email: form.email,
+            taxId: form.document,
+            phone: form.phone,
+          },
+          address: {
+            zipCode: form.zip,
+            street: form.street,
+            number: form.number,
+            complement: form.complement || null,
+            district: form.district,
+            city: form.city,
+            state: form.state,
+          },
+          items: items.map((item) => ({
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+          })),
+        },
+      });
+      setPayment(result);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível gerar o PIX. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const onPaid = () => {
+    trackPurchase(total, items);
+    clear();
+    void navigate({ to: "/obrigado" });
+  };
+
 
   if (hydrated && items.length === 0) {
     return (
@@ -331,13 +386,15 @@ function CheckoutRoute() {
                 <span>3</span>
                 <div>
                   <h3>pagamento</h3>
-                  <p>Aprovação imediata e desconto já aplicado nos preços.</p>
+                  <p>Pagamento via PIX com aprovação imediata.</p>
                 </div>
               </div>
               {error && <p className="form-error">{error}</p>}
-              <button className="checkout-button" type="submit">
-                finalizar pedido
+              <button className="checkout-button" disabled={loading} type="submit">
+                {loading ? <Loader2 className="pix-spin" size={16} /> : null}
+                {loading ? "gerando pix…" : "pagar com pix"}
               </button>
+
             </section>
 
           </form>
@@ -390,6 +447,11 @@ function CheckoutRoute() {
           </ul>
         </aside>
       </div>
+
+      {payment && (
+        <PixModal amount={total} payment={payment} onClose={() => setPayment(null)} onPaid={onPaid} />
+      )}
     </div>
+
   );
 }
