@@ -25,22 +25,72 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
+function maskPhone(value: string): string {
+  const digits = value.replace(/\D/g, "").slice(0, 11);
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 6) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+  if (digits.length <= 10)
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+}
+
 function Newsletter() {
   const [sent, setSent] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [error, setError] = useState("");
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const form = event.currentTarget;
+    const email = (form.elements.namedItem("newsletter-email") as HTMLInputElement).value.trim();
+    const phoneDigits = phone.replace(/\D/g, "");
+    if (!email.includes("@")) {
+      setError("Informe um e-mail válido.");
+      return;
+    }
+    if (phoneDigits.length < 10) {
+      setError("Informe um telefone válido com DDD.");
+      return;
+    }
+    setError("");
     setSent(true);
   };
 
   return (
     <section className="newsletter-section">
       <h2>receba ofertas e lançamentos em primeira mão</h2>
+      <p className="newsletter-subtitle">
+        cadastre seu e-mail e whatsapp e fique por dentro de tudo antes de todo mundo
+      </p>
       <form onSubmit={onSubmit}>
-        <input aria-label="Seu nome" placeholder="seu nome" required />
-        <input aria-label="Seu e-mail" placeholder="seu melhor e-mail" required type="email" />
+        <input
+          aria-label="Seu nome"
+          name="newsletter-name"
+          placeholder="seu nome"
+          required
+          maxLength={80}
+        />
+        <input
+          aria-label="Seu e-mail"
+          name="newsletter-email"
+          placeholder="seu melhor e-mail"
+          required
+          type="email"
+          maxLength={120}
+        />
+        <input
+          aria-label="Seu WhatsApp"
+          inputMode="tel"
+          name="newsletter-phone"
+          placeholder="seu whatsapp (ddd)"
+          required
+          type="tel"
+          value={phone}
+          onChange={(event) => setPhone(maskPhone(event.target.value))}
+        />
         <button type="submit">quero receber</button>
       </form>
+      {error && <p className="form-error">{error}</p>}
       {sent && <p className="form-success">Pronto! Você está na nossa lista. ♥</p>}
     </section>
   );
