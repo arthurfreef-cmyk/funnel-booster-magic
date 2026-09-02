@@ -84,10 +84,27 @@ export function CartDrawer() {
                   <span>Subtotal</span>
                   <span>{formatPrice(subtotal)}</span>
                 </p>
-                <p>
-                  <span>Frete</span>
-                  <span>{formatPrice(shipping)}</span>
-                </p>
+                {simulated ? (
+                  <p>
+                    <span>Frete</span>
+                    <span>{formatPrice(shipping)}</span>
+                  </p>
+                ) : (
+                  <form className="cart-shipping-sim" onSubmit={simulate}>
+                    <label htmlFor="cart-zip">simular frete</label>
+                    <div>
+                      <input
+                        id="cart-zip"
+                        inputMode="numeric"
+                        maxLength={9}
+                        placeholder="00000-000"
+                        value={zip}
+                        onChange={(event) => setZip(event.target.value)}
+                      />
+                      <button type="submit">ok</button>
+                    </div>
+                  </form>
+                )}
                 <p className="cart-summary-total">
                   <span>Total</span>
                   <strong>{formatPrice(total)}</strong>
