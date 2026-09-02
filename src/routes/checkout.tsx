@@ -50,14 +50,12 @@ const EMPTY: FormState = {
 };
 
 function CheckoutRoute() {
-  const { items, subtotal, shipping, total, add, clear, hydrated } = useCart();
-  const navigate = useNavigate();
+  const { items, subtotal, shipping, total, add, hydrated } = useCart();
   const [form, setForm] = useState<FormState>(EMPTY);
   const [error, setError] = useState<string | null>(null);
   const [cepLoading, setCepLoading] = useState(false);
   const [cepFilled, setCepFilled] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [payment, setPayment] = useState<PixResult | null>(null);
   const numberRef = useRef<HTMLInputElement>(null);
   const cepAbortRef = useRef<AbortController | null>(null);
   const bumpAdded = items.some((item) => item.slug === ORDER_BUMP.slug);
