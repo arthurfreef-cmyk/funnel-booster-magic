@@ -270,7 +270,7 @@ export function PrizeWheel() {
           </>
         ) : (
           <button className="checkout-button" disabled={spinning} type="button" onClick={spin}>
-            {spinning ? "girando..." : "girar a roleta"}
+            {spinning ? "girando..." : tryAgain ? "girar novamente" : "girar a roleta"}
           </button>
         )}
 
