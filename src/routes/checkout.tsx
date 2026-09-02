@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 
 import { CardModal } from "@/components/CardModal";
 import { PixModal } from "@/components/PixModal";
-import { readAddress } from "@/lib/shipping-address";
+import { readAddress, saveAddress } from "@/lib/shipping-address";
 import { ORDER_BUMP } from "@/data/site";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/format";
@@ -162,6 +162,13 @@ function CheckoutRoute() {
         state: data.uf ?? current.state,
       }));
       setCepFilled(true);
+      saveAddress({
+        zip: `${cep.slice(0, 5)}-${cep.slice(5)}`,
+        street: data.logradouro ?? "",
+        district: data.bairro ?? "",
+        city: data.localidade ?? "",
+        state: data.uf ?? "",
+      });
       // Leva o cliente direto ao campo que falta: número.
       numberRef.current?.focus();
     } catch {
@@ -523,6 +530,8 @@ function CheckoutRoute() {
           </ul>
         </aside>
       </div>
+
+      {cardOpen && <CardModal amount={effectiveTotal} onClose={() => setCardOpen(false)} />}
 
       {payment && (
         <PixModal amount={effectiveTotal} payment={payment} onClose={() => setPayment(null)} onPaid={onPaid} />
