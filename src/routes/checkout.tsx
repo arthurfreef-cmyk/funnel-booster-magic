@@ -1,12 +1,11 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Bolt, RefreshCcw, ShieldCheck } from "lucide-react";
 import { useRef, useState, type FormEvent } from "react";
 
-import { PixButton } from "@/components/PixButton";
 import { ORDER_BUMP } from "@/data/site";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/format";
-import { trackInitiateCheckout, trackPurchase } from "@/lib/pixels";
+import { trackInitiateCheckout } from "@/lib/pixels";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
@@ -50,8 +49,7 @@ const EMPTY: FormState = {
 };
 
 function CheckoutRoute() {
-  const navigate = useNavigate();
-  const { items, subtotal, shipping, total, add, clear, hydrated } = useCart();
+  const { items, subtotal, shipping, total, add, hydrated } = useCart();
   const [form, setForm] = useState<FormState>(EMPTY);
   const [error, setError] = useState<string | null>(null);
   const [cepLoading, setCepLoading] = useState(false);
@@ -151,7 +149,9 @@ function CheckoutRoute() {
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    validate();
+    if (!validate()) return;
+    trackInitiateCheckout(total, items);
+    setError("Pagamento em configuração. Em breve você poderá concluir seu pedido.");
   };
 
   if (hydrated && items.length === 0) {
@@ -335,25 +335,9 @@ function CheckoutRoute() {
                 </div>
               </div>
               {error && <p className="form-error">{error}</p>}
-              <PixButton
-                amount={total}
-                customer={{
-                  name: form.name,
-                  email: form.email,
-                  document: form.document,
-                  phone: form.phone,
-                }}
-                onBeforeCreate={() => {
-                  const ok = validate();
-                  if (ok) trackInitiateCheckout(total, items);
-                  return ok;
-                }}
-                onPaid={() => {
-                  trackPurchase(total, items);
-                  clear();
-                  void navigate({ to: "/obrigado" });
-                }}
-              />
+              <button className="checkout-button" type="submit">
+                finalizar pedido
+              </button>
             </section>
 
           </form>
