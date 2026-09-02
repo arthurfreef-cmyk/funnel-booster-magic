@@ -130,9 +130,12 @@ export function PrizeWheel() {
     if (!disc) return;
 
     setSpinning(true);
+    setTryAgain(false);
+    // 1º giro cai em "tente de novo"; o 2º entrega o prêmio.
+    const landingIndex = spins === 0 ? TRY_AGAIN_INDEX : WINNING_INDEX;
     // Pequeno desvio dentro da fatia para o giro não parecer calculado.
     const jitter = (Math.random() - 0.5) * (SEGMENT * 0.5);
-    const center = WINNING_INDEX * SEGMENT + SEGMENT / 2;
+    const center = landingIndex * SEGMENT + SEGMENT / 2;
     // Giro de 2s: 5 voltas completas com desaceleração suave até o prêmio.
     const target = 360 * 5 + (360 - center) + jitter;
 
