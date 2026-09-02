@@ -176,12 +176,18 @@ function CheckoutRoute() {
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!validate() || loading) return;
-    trackInitiateCheckout(total, items);
+    if (method === "card") {
+      setError(
+        "O pagamento com cartão está em configuração. Aproveite o preço promocional pagando no PIX.",
+      );
+      return;
+    }
+    trackInitiateCheckout(effectiveTotal, items);
     setLoading(true);
     try {
       const result = await createPixPayment({
         data: {
-          amount: total,
+          amount: effectiveTotal,
           shipping,
           payer: {
             name: form.name,
@@ -397,13 +403,52 @@ function CheckoutRoute() {
                 <span>3</span>
                 <div>
                   <h3>pagamento</h3>
-                  <p>Pagamento via PIX com aprovação imediata.</p>
+                  <p>Escolha como pagar. O desconto promocional é válido somente no PIX.</p>
                 </div>
               </div>
+
+              <div className="pay-methods" role="radiogroup" aria-label="Método de pagamento">
+                <label className={method === "pix" ? "pay-method active" : "pay-method"}>
+                  <input
+                    checked={method === "pix"}
+                    name="payment-method"
+                    type="radio"
+                    onChange={() => setMethod("pix")}
+                  />
+                  <div>
+                    <strong>PIX</strong>
+                    <span>preço promocional com até 70% OFF + aprovação imediata</span>
+                  </div>
+                  <em>recomendado</em>
+                </label>
+                <label className={method === "card" ? "pay-method active" : "pay-method"}>
+                  <input
+                    checked={method === "card"}
+                    name="payment-method"
+                    type="radio"
+                    onChange={() => setMethod("card")}
+                  />
+                  <div>
+                    <strong>cartão de crédito</strong>
+                    <span>preço normal, sem o desconto promocional do PIX</span>
+                  </div>
+                </label>
+              </div>
+              {method === "card" && (
+                <p className="pay-warning">
+                  Atenção: a promoção é válida somente no PIX. No cartão o valor cobrado é o preço
+                  normal de cada produto.
+                </p>
+              )}
+
               {error && <p className="form-error">{error}</p>}
               <button className="checkout-button" disabled={loading} type="submit">
                 {loading ? <Loader2 className="pix-spin" size={16} /> : null}
-                {loading ? "gerando pix…" : "pagar com pix"}
+                {loading
+                  ? "gerando pix…"
+                  : method === "pix"
+                    ? "pagar com pix"
+                    : "pagar com cartão"}
               </button>
 
             </section>
