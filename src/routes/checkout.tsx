@@ -151,15 +151,63 @@ function CheckoutRoute() {
       setError("Confira nome, e-mail e CPF antes de continuar.");
       return false;
     }
+    if (form.phone.replace(/\D/g, "").length < 10) {
+      setError("Informe um celular válido com DDD.");
+      return false;
+    }
+    if (!cepFilled || !form.street.trim() || !form.number.trim() || !form.city.trim() || !form.state.trim()) {
+      setError("Complete o endereço de entrega (CEP e número).");
+      return false;
+    }
     return true;
   };
 
-  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!validate()) return;
+    if (!validate() || loading) return;
     trackInitiateCheckout(total, items);
-    setError("Pagamento em configuração. Em breve você poderá concluir seu pedido.");
+    setLoading(true);
+    try {
+      const result = await createPixPayment({
+        data: {
+          amount: total,
+          shipping,
+          payer: {
+            name: form.name,
+            email: form.email,
+            taxId: form.document,
+            phone: form.phone,
+          },
+          address: {
+            zipCode: form.zip,
+            street: form.street,
+            number: form.number,
+            complement: form.complement || null,
+            district: form.district,
+            city: form.city,
+            state: form.state,
+          },
+          items: items.map((item) => ({
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+          })),
+        },
+      });
+      setPayment(result);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível gerar o PIX. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const onPaid = () => {
+    trackPurchase(total, items);
+    clear();
+    void navigate({ to: "/obrigado" });
+  };
+
 
   if (hydrated && items.length === 0) {
     return (
