@@ -220,7 +220,7 @@ function CheckoutRoute() {
   };
 
   const onPaid = () => {
-    trackPurchase(total, items);
+    trackPurchase(effectiveTotal, items);
     clear();
     void navigate({ to: "/obrigado" });
   };
@@ -467,14 +467,14 @@ function CheckoutRoute() {
                   <p>{item.name}</p>
                   <span>quantidade: {item.quantity}</span>
                 </div>
-                <strong>{formatPrice(item.price * item.quantity)}</strong>
+                <strong>{formatPrice(itemPrice(item) * item.quantity)}</strong>
               </li>
             ))}
           </ul>
 
           <p>
             <span>Subtotal</span>
-            <span>{formatPrice(subtotal)}</span>
+            <span>{formatPrice(effectiveSubtotal)}</span>
           </p>
           {cepFilled && (
             <p>
@@ -483,8 +483,8 @@ function CheckoutRoute() {
             </p>
           )}
           <div>
-            <span>Total</span>
-            <strong>{formatPrice(total)}</strong>
+            <span>Total {method === "card" && <small>(preço normal)</small>}</span>
+            <strong>{formatPrice(effectiveTotal)}</strong>
           </div>
 
           <ul className="summary-trust">
