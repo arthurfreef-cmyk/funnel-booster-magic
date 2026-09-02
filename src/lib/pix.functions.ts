@@ -94,7 +94,11 @@ export const createPixPayment = createServerFn({ method: "POST" })
         name: data.payer.name.trim(),
         email: data.payer.email.trim(),
         document: digits(data.payer.taxId),
-        phone: digits(data.payer.phone),
+        // BuckPay exige DDI: 55 + DDD + número (mínimo 12 dígitos).
+        phone: (() => {
+          const phone = digits(data.payer.phone);
+          return phone.startsWith("55") && phone.length >= 12 ? phone : `55${phone}`;
+        })(),
       },
       description: `Pedido wepink - ${data.items.length} item(ns)`,
       items: data.items.map((item) => ({
