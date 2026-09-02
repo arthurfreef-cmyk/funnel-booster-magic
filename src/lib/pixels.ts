@@ -72,8 +72,8 @@ export function trackEvent(event: string, params?: Record<string, unknown>) {
   window.fbq?.("track", event, params);
 }
 
-/** Valor em centavos → string decimal para os pixels. */
-const toCurrency = (cents: number) => (cents / 100).toFixed(2);
+/** Valor em reais → string decimal para os pixels. */
+const toCurrency = (value: number) => value.toFixed(2);
 
 export function trackAddToCart(item: { name: string; slug: string; price: number; quantity: number }) {
   trackEvent("AddToCart", {
