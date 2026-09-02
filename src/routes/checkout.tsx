@@ -64,6 +64,17 @@ function CheckoutRoute() {
   const cepAbortRef = useRef<AbortController | null>(null);
   const bumpAdded = items.some((item) => item.slug === ORDER_BUMP.slug);
 
+  /** Método de pagamento: PIX tem preço promocional; cartão volta ao preço normal. */
+  const [method, setMethod] = useState<"pix" | "card">("pix");
+  const cardSubtotal = items.reduce(
+    (sum, item) => sum + (item.listPrice > item.price ? item.listPrice : item.price) * item.quantity,
+    0,
+  );
+  const effectiveSubtotal = method === "card" ? cardSubtotal : subtotal;
+  const effectiveTotal = effectiveSubtotal + shipping;
+  const itemPrice = (item: (typeof items)[number]) =>
+    method === "card" && item.listPrice > item.price ? item.listPrice : item.price;
+
 
   const update = (key: keyof FormState) => (event: { target: { value: string } }) =>
     setForm((current) => ({ ...current, [key]: event.target.value }));
