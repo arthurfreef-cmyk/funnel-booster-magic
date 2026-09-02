@@ -53,6 +53,7 @@ function CheckoutRoute() {
   const [form, setForm] = useState<FormState>(EMPTY);
   const [error, setError] = useState<string | null>(null);
   const [cepLoading, setCepLoading] = useState(false);
+  const [cepFilled, setCepFilled] = useState(false);
   const numberRef = useRef<HTMLInputElement>(null);
   const cepAbortRef = useRef<AbortController | null>(null);
   const bumpAdded = items.some((item) => item.slug === ORDER_BUMP.slug);
@@ -65,7 +66,30 @@ function CheckoutRoute() {
     const digits = event.target.value.replace(/\D/g, "").slice(0, 8);
     const masked = digits.length > 5 ? `${digits.slice(0, 5)}-${digits.slice(5)}` : digits;
     setForm((current) => ({ ...current, zip: masked }));
+    setCepFilled(false);
     if (digits.length === 8) void lookupCep(digits);
+  };
+
+  /** Máscara de CPF: 000.000.000-00. */
+  const onCpfChange = (event: { target: { value: string } }) => {
+    const d = event.target.value.replace(/\D/g, "").slice(0, 11);
+    const masked = d
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
+      .replace(/(\d{3})\.(\d{3})\.(\d{3})(\d{1,2})/, "$1.$2.$3-$4");
+    setForm((current) => ({ ...current, document: masked }));
+  };
+
+  /** Máscara de telefone: (00) 00000-0000. */
+  const onPhoneChange = (event: { target: { value: string } }) => {
+    const d = event.target.value.replace(/\D/g, "").slice(0, 11);
+    const masked =
+      d.length > 6
+        ? `(${d.slice(0, 2)}) ${d.slice(2, d.length > 10 ? 7 : 6)}-${d.slice(d.length > 10 ? 7 : 6)}`
+        : d.length > 2
+          ? `(${d.slice(0, 2)}) ${d.slice(2)}`
+          : d;
+    setForm((current) => ({ ...current, phone: masked }));
   };
 
   /** Consulta o ViaCEP e preenche rua, bairro, cidade e UF automaticamente. */
