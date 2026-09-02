@@ -52,12 +52,14 @@ const EMPTY: FormState = {
 };
 
 function CheckoutRoute() {
-  const { items, subtotal, shipping, total, add, hydrated } = useCart();
+  const { items, subtotal, shipping, total, add, clear, hydrated } = useCart();
+  const navigate = useNavigate();
   const [form, setForm] = useState<FormState>(EMPTY);
   const [error, setError] = useState<string | null>(null);
   const [cepLoading, setCepLoading] = useState(false);
   const [cepFilled, setCepFilled] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [payment, setPayment] = useState<PixResult | null>(null);
   const numberRef = useRef<HTMLInputElement>(null);
   const cepAbortRef = useRef<AbortController | null>(null);
   const bumpAdded = items.some((item) => item.slug === ORDER_BUMP.slug);
@@ -165,9 +167,45 @@ function CheckoutRoute() {
     if (!validate() || loading) return;
     trackInitiateCheckout(total, items);
     setLoading(true);
-    // Nenhum gateway de pagamento configurado no momento.
-    setError("Pagamento em configuração. Em breve você poderá concluir seu pedido por aqui.");
-    setLoading(false);
+    try {
+      const result = await createPixPayment({
+        data: {
+          amount: total,
+          shipping,
+          payer: {
+            name: form.name,
+            email: form.email,
+            taxId: form.document,
+            phone: form.phone,
+          },
+          address: {
+            zipCode: form.zip,
+            street: form.street,
+            number: form.number,
+            complement: form.complement || undefined,
+            district: form.district,
+            city: form.city,
+            state: form.state,
+          },
+          items: items.map((item) => ({
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+          })),
+        },
+      });
+      setPayment(result);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível gerar o PIX. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onPaid = () => {
+    trackPurchase(total, items);
+    clear();
+    void navigate({ to: "/obrigado" });
   };
 
 
