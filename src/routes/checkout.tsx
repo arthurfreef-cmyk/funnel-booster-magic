@@ -379,10 +379,12 @@ function CheckoutRoute() {
             <span>Subtotal</span>
             <span>{formatPrice(subtotal)}</span>
           </p>
-          <p>
-            <span>Frete</span>
-            <span>{formatPrice(shipping)}</span>
-          </p>
+          {cepFilled && (
+            <p>
+              <span>Frete</span>
+              <span>{formatPrice(shipping)}</span>
+            </p>
+          )}
           <div>
             <span>Total</span>
             <strong>{formatPrice(total)}</strong>
