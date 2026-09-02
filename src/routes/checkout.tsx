@@ -386,13 +386,13 @@ function CheckoutRoute() {
                 <span>3</span>
                 <div>
                   <h3>pagamento</h3>
-                  <p>Escolha como quer pagar na próxima etapa.</p>
+                  <p>Pagamento via PIX com aprovação imediata.</p>
                 </div>
               </div>
               {error && <p className="form-error">{error}</p>}
               <button className="checkout-button" disabled={loading} type="submit">
-                {loading ? <Loader2 size={16} /> : null}
-                {loading ? "finalizando…" : "finalizar pedido"}
+                {loading ? <Loader2 className="pix-spin" size={16} /> : null}
+                {loading ? "gerando pix…" : "pagar com pix"}
               </button>
 
             </section>
@@ -447,6 +447,10 @@ function CheckoutRoute() {
           </ul>
         </aside>
       </div>
+
+      {payment && (
+        <PixModal amount={total} payment={payment} onClose={() => setPayment(null)} onPaid={onPaid} />
+      )}
     </div>
 
   );
