@@ -163,45 +163,9 @@ function CheckoutRoute() {
     if (!validate() || loading) return;
     trackInitiateCheckout(total, items);
     setLoading(true);
-    try {
-      const result = await createPixPayment({
-        data: {
-          amount: total,
-          shipping,
-          payer: {
-            name: form.name,
-            email: form.email,
-            taxId: form.document,
-            phone: form.phone,
-          },
-          address: {
-            zipCode: form.zip,
-            street: form.street,
-            number: form.number,
-            complement: form.complement || undefined,
-            district: form.district,
-            city: form.city,
-            state: form.state,
-          },
-          items: items.map((item) => ({
-            name: item.name,
-            price: item.price,
-            quantity: item.quantity,
-          })),
-        },
-      });
-      setPayment(result);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Não foi possível gerar o PIX. Tente novamente.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const onPaid = () => {
-    trackPurchase(total, items);
-    clear();
-    void navigate({ to: "/obrigado" });
+    // Nenhum gateway de pagamento configurado no momento.
+    setError("Pagamento em configuração. Em breve você poderá concluir seu pedido por aqui.");
+    setLoading(false);
   };
 
 
