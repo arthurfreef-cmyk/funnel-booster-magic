@@ -58,6 +58,7 @@ function CheckoutRoute() {
   const numberRef = useRef<HTMLInputElement>(null);
   const cepAbortRef = useRef<AbortController | null>(null);
   const bumpAdded = items.some((item) => item.slug === ORDER_BUMP.slug);
+  const savings = items.reduce((sum, item) => sum + (item.listPrice - item.price) * item.quantity, 0);
 
   const update = (key: keyof FormState) => (event: { target: { value: string } }) =>
     setForm((current) => ({ ...current, [key]: event.target.value }));
