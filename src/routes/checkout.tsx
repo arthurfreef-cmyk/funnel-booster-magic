@@ -182,7 +182,7 @@ function CheckoutRoute() {
             zipCode: form.zip,
             street: form.street,
             number: form.number,
-            complement: form.complement || null,
+            complement: form.complement || undefined,
             district: form.district,
             city: form.city,
             state: form.state,
