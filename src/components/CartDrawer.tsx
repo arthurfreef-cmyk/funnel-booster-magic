@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useState, type FormEvent } from "react";
 
 import { CART_ICON } from "@/data/site";
 import { useCart } from "@/lib/cart";
@@ -6,8 +7,17 @@ import { formatPrice } from "@/lib/format";
 
 /** Mini-cesta lateral, aberta ao adicionar um produto. */
 export function CartDrawer() {
-  const { items, drawerOpen, closeDrawer, setQuantity, remove, subtotal, shipping, total } =
-    useCart();
+  const { items, drawerOpen, closeDrawer, setQuantity, remove, subtotal, shipping } = useCart();
+  const [zip, setZip] = useState("");
+  const [simulated, setSimulated] = useState(false);
+
+  const total = subtotal + (simulated ? shipping : 0);
+
+  const simulate = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (zip.replace(/\D/g, "").length !== 8) return;
+    setSimulated(true);
+  };
 
   if (!drawerOpen) return null;
 
