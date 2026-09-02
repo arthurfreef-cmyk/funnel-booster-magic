@@ -1,8 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Bolt, Loader2, RefreshCcw, ShieldCheck } from "lucide-react";
-import { useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 
+import { CardModal } from "@/components/CardModal";
 import { PixModal } from "@/components/PixModal";
+import { readAddress } from "@/lib/shipping-address";
 import { ORDER_BUMP } from "@/data/site";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/format";
