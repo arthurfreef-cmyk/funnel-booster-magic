@@ -43,3 +43,18 @@ img{max-width:100%}
 .summary-trust li{display:flex;align-items:center;gap:10px;font-size:13px;color:#444}
 .summary-trust svg{flex-shrink:0;color:var(--pink)}
 
+
+/* ---- modal PIX ---- */
+.pix-overlay{position:fixed;inset:0;z-index:60;background:rgba(16,16,16,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.pix-modal{position:relative;background:#fff;border-radius:16px;max-width:420px;width:100%;padding:28px 24px;display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.pix-modal h3{margin:0;font-size:22px;color:var(--pink);letter-spacing:-.02em}
+.pix-close{position:absolute;top:12px;right:12px;background:var(--pink-soft);border:0;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:var(--pink)}
+.pix-amount{margin:0;font-size:28px;font-weight:800}
+.pix-qr{width:220px;height:220px;border:1px solid var(--line);border-radius:12px}
+.pix-qr-skeleton{width:220px;height:220px;border-radius:12px;background:var(--pink-soft)}
+.pix-hint{margin:0;font-size:13px;color:var(--muted)}
+.pix-code{width:100%;max-height:74px;overflow:hidden;text-overflow:ellipsis;font-size:11px;background:#f7f7f7;border:1px solid var(--line);border-radius:8px;padding:10px;word-break:break-all;text-align:left}
+.pix-copy{display:flex;align-items:center;gap:8px;background:var(--pink-soft);color:var(--pink);border:0;border-radius:8px;height:40px;padding:0 16px;font-size:13px;font-weight:700}
+.pix-modal .checkout-button{width:100%;display:flex;align-items:center;justify-content:center;gap:8px}
+.pix-spin{animation:pix-spin 1s linear infinite}
+@keyframes pix-spin{to{transform:rotate(360deg)}}

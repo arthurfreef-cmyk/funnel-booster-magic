@@ -1,11 +1,13 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Bolt, Loader2, RefreshCcw, ShieldCheck } from "lucide-react";
 import { useRef, useState, type FormEvent } from "react";
 
+import { PixModal } from "@/components/PixModal";
 import { ORDER_BUMP } from "@/data/site";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/format";
-import { trackInitiateCheckout } from "@/lib/pixels";
+import { createPixPayment, type PixResult } from "@/lib/pix.functions";
+import { trackInitiateCheckout, trackPurchase } from "@/lib/pixels";
 
 
 export const Route = createFileRoute("/checkout")({
