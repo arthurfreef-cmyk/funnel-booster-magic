@@ -5,6 +5,7 @@ import { PixButton } from "@/components/PixButton";
 import { ORDER_BUMP } from "@/data/site";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/format";
+import { trackInitiateCheckout, trackPurchase } from "@/lib/pixels";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
@@ -341,8 +342,13 @@ function CheckoutRoute() {
                   document: form.document,
                   phone: form.phone,
                 }}
-                onBeforeCreate={validate}
+                onBeforeCreate={() => {
+                  const ok = validate();
+                  if (ok) trackInitiateCheckout(total, items);
+                  return ok;
+                }}
                 onPaid={() => {
+                  trackPurchase(total, items);
                   clear();
                   void navigate({ to: "/obrigado" });
                 }}
