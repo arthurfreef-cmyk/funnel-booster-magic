@@ -180,9 +180,7 @@ function CheckoutRoute() {
     event.preventDefault();
     if (!validate() || loading) return;
     if (method === "card") {
-      setError(
-        "O pagamento com cartão está em configuração. Aproveite o preço promocional pagando no PIX.",
-      );
+      setCardOpen(true);
       return;
     }
     trackInitiateCheckout(effectiveTotal, items);
