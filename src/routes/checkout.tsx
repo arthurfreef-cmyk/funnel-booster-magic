@@ -49,8 +49,7 @@ const EMPTY: FormState = {
 };
 
 function CheckoutRoute() {
-  const navigate = useNavigate();
-  const { items, subtotal, shipping, total, add, clear, hydrated } = useCart();
+  const { items, subtotal, shipping, total, add, hydrated } = useCart();
   const [form, setForm] = useState<FormState>(EMPTY);
   const [error, setError] = useState<string | null>(null);
   const [cepLoading, setCepLoading] = useState(false);
