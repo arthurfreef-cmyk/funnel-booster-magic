@@ -380,12 +380,6 @@ function CheckoutRoute() {
             <span>Subtotal</span>
             <span>{formatPrice(subtotal)}</span>
           </p>
-          {savings > 0 && (
-            <p className="summary-savings">
-              <span>você economiza</span>
-              <span>-{formatPrice(savings)}</span>
-            </p>
-          )}
           <p>
             <span>Frete</span>
             <span>{formatPrice(shipping)}</span>
@@ -394,12 +388,20 @@ function CheckoutRoute() {
             <span>Total</span>
             <strong>{formatPrice(total)}</strong>
           </div>
-          <p className="summary-installments">ou em até 6x de {formatPrice(total / 6)} sem juros</p>
 
           <ul className="summary-trust">
-            <li><span aria-hidden>⚡</span> pix com aprovação imediata</li>
-            <li><span aria-hidden>🔒</span> compra 100% segura</li>
-            <li><span aria-hidden>↩</span> troca fácil em até 7 dias</li>
+            <li>
+              <Bolt aria-hidden size={18} />
+              <span>pix com aprovação imediata</span>
+            </li>
+            <li>
+              <ShieldCheck aria-hidden size={18} />
+              <span>compra 100% segura</span>
+            </li>
+            <li>
+              <RefreshCcw aria-hidden size={18} />
+              <span>troca fácil em até 7 dias</span>
+            </li>
           </ul>
         </aside>
       </div>
