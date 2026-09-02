@@ -1,4 +1,6 @@
 # Roadmap
 
 - [x] Integração Pix Pingupag (proxy backend + botão one-click)
-- [ ] Validar geração real do Pix na API Pingupag (product hash e upsell são opcionais)
+- [x] Remover integração MasterFy inteira
+- [ ] Integrar BuckPay (transação PIX via /v1/transactions + modal de pagamento)
+- [ ] Salvar segredos BUCKPAY_TOKEN e BUCKPAY_USER_AGENT e validar geração real do PIX
