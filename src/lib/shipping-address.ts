@@ -39,7 +39,7 @@ export function readAddress(): SavedAddress | null {
 
 /** Consulta o ViaCEP e devolve o endereço, ou null quando o CEP não existe. */
 export async function lookupZip(digits: string, signal?: AbortSignal): Promise<SavedAddress | null> {
-  const response = await fetch(`https://viacep.com.br/ws/${digits}/json/`, { signal });
+  const response = await fetch(`https://viacep.com.br/ws/${digits}/json/`, { signal: signal ?? null });
   const data = (await response.json()) as {
     erro?: boolean | string;
     logradouro?: string;
