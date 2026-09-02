@@ -67,6 +67,25 @@ function CheckoutRoute() {
   const cepAbortRef = useRef<AbortController | null>(null);
   const bumpAdded = items.some((item) => item.slug === ORDER_BUMP.slug);
 
+  // Reaproveita o CEP/endereço simulado no carrinho.
+  useEffect(() => {
+    const saved = readAddress();
+    if (!saved) return;
+    setForm((current) =>
+      current.zip
+        ? current
+        : {
+            ...current,
+            zip: saved.zip,
+            street: saved.street,
+            district: saved.district,
+            city: saved.city,
+            state: saved.state,
+          },
+    );
+    setCepFilled(true);
+  }, []);
+
   /** Método de pagamento: PIX tem preço promocional; cartão volta ao preço normal. */
   const [method, setMethod] = useState<"pix" | "card">("pix");
   const cardSubtotal = items.reduce(
