@@ -4,3 +4,5 @@
 - [x] Remover integração MasterFy inteira
 - [x] Integrar BuckPay (transação PIX + modal, testado: PIX gerado)
 - [x] Segredos BUCKPAY_TOKEN e BUCKPAY_USER_AGENT salvos e validados
+
+- [ ] Carrinho: remover frete automático; mostrar apenas campo "simular frete" (CEP) e exibir frete só após simulação
