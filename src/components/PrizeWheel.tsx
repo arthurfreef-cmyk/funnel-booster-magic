@@ -141,21 +141,32 @@ export function PrizeWheel() {
 
     // A Web Animations API mantém todos os quadros no compositor do navegador.
     // Assim, rerenders do React ou regras globais de transição não interrompem o giro.
+    // O 2º giro parte da posição em que o 1º parou, sem salto visual.
+    const from = rotationRef.current;
+    const delta = (((360 - center + jitter - from) % 360) + 360) % 360;
+    const to = from + 360 * 5 + delta;
+    void target;
     const animation = disc.animate(
-      [{ transform: "rotate(0deg)" }, { transform: `rotate(${target}deg)` }],
+      [{ transform: `rotate(${from}deg)` }, { transform: `rotate(${to}deg)` }],
       {
         duration: SPIN_MS,
         easing: "cubic-bezier(.12,.7,.08,1)",
         fill: "forwards",
       },
     );
+    rotationRef.current = to % 360;
     spinAnimationRef.current = animation;
     animation.onfinish = () => {
-      disc.style.transform = `rotate(${target % 360}deg)`;
+      disc.style.transform = `rotate(${to % 360}deg)`;
       animation.cancel();
       spinAnimationRef.current = null;
       setSpinning(false);
-      setWon(true);
+      if (landingIndex === TRY_AGAIN_INDEX) {
+        setSpins(1);
+        setTryAgain(true);
+      } else {
+        setWon(true);
+      }
     };
     animation.oncancel = () => {
       spinAnimationRef.current = null;
