@@ -407,10 +407,6 @@ function CheckoutRoute() {
           </ul>
         </aside>
       </div>
-
-      {payment && (
-        <PixModal amount={total} payment={payment} onClose={() => setPayment(null)} onPaid={onPaid} />
-      )}
     </div>
 
   );
