@@ -333,25 +333,9 @@ function CheckoutRoute() {
                 </div>
               </div>
               {error && <p className="form-error">{error}</p>}
-              <PixButton
-                amount={total}
-                customer={{
-                  name: form.name,
-                  email: form.email,
-                  document: form.document,
-                  phone: form.phone,
-                }}
-                onBeforeCreate={() => {
-                  const ok = validate();
-                  if (ok) trackInitiateCheckout(total, items);
-                  return ok;
-                }}
-                onPaid={() => {
-                  trackPurchase(total, items);
-                  clear();
-                  void navigate({ to: "/obrigado" });
-                }}
-              />
+              <button className="checkout-button" type="submit">
+                finalizar pedido
+              </button>
             </section>
 
           </form>
