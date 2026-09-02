@@ -225,11 +225,11 @@ function CheckoutRoute() {
               </div>
               <label>
                 <span>nome completo</span>
-                <input autoComplete="name" value={form.name} onChange={update("name")} />
+                <input autoComplete="name" placeholder="Seu nome completo" value={form.name} onChange={update("name")} />
               </label>
               <label>
                 <span>e-mail</span>
-                <input autoComplete="email" type="email" value={form.email} onChange={update("email")} />
+                <input autoComplete="email" placeholder="voce@email.com" type="email" value={form.email} onChange={update("email")} />
               </label>
               <div className="checkout-field-row city-state">
                 <label>
@@ -285,11 +285,11 @@ function CheckoutRoute() {
               <div className="checkout-field-row number-complement">
                 <label>
                   <span>número</span>
-                  <input ref={numberRef} value={form.number} onChange={update("number")} />
+                  <input ref={numberRef} inputMode="numeric" placeholder="123" value={form.number} onChange={update("number")} />
                 </label>
                 <label>
                   <span>complemento</span>
-                  <input value={form.complement} onChange={update("complement")} />
+                  <input placeholder="opcional" value={form.complement} onChange={update("complement")} />
                 </label>
               </div>
               <label>
