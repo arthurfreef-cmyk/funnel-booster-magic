@@ -149,7 +149,9 @@ function CheckoutRoute() {
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    validate();
+    if (!validate()) return;
+    trackInitiateCheckout(total, items);
+    setError("Pagamento em configuração. Em breve você poderá concluir seu pedido.");
   };
 
   if (hydrated && items.length === 0) {
