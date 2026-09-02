@@ -20,6 +20,8 @@ const PRIZES: readonly Prize[] = [
 ] as const;
 
 const WINNING_INDEX = 4;
+const TRY_AGAIN_INDEX = 7;
+const MAX_SPINS = 2;
 const SEGMENT = 360 / PRIZES.length;
 const SPIN_MS = 2000;
 const OFFER_SECONDS = 10 * 60;
@@ -63,6 +65,8 @@ export function PrizeWheel() {
   const [open, setOpen] = useState(false);
   const [spinning, setSpinning] = useState(false);
   const [won, setWon] = useState(false);
+  const [spins, setSpins] = useState(0);
+  const [tryAgain, setTryAgain] = useState(false);
   const [remaining, setRemaining] = useState(OFFER_SECONDS);
   const discRef = useRef<SVGSVGElement | null>(null);
   const spinAnimationRef = useRef<Animation | null>(null);
