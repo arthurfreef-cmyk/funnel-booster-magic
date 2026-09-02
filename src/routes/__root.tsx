@@ -14,6 +14,7 @@ import wepinkCss from "../wepink.css?url";
 import { Layout } from "../components/Layout";
 import { CartProvider } from "../lib/cart";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { initPixels } from "../lib/pixels";
 
 
 function NotFoundComponent() {
@@ -117,6 +118,15 @@ function RootShell({ children }: { children: ReactNode }) {
       </head>
       <body>
         {children}
+        <noscript>
+          <img
+            height={1}
+            width={1}
+            style={{ display: "none" }}
+            src="https://www.facebook.com/tr?id=2505633886593330&ev=PageView&noscript=1"
+            alt=""
+          />
+        </noscript>
         <Scripts />
       </body>
     </html>
@@ -125,6 +135,10 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  useEffect(() => {
+    initPixels();
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

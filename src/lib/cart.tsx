@@ -10,6 +10,7 @@ import {
 
 import type { Product } from "@/data/site";
 import { SHIPPING_FLAT } from "@/data/site";
+import { trackAddToCart } from "@/lib/pixels";
 
 export interface CartItem {
   slug: string;
@@ -101,6 +102,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         },
       ];
     });
+    trackAddToCart({ name: product.name, slug: product.slug, price: product.price, quantity: qty });
     setDrawerOpen(true);
   }, []);
 
