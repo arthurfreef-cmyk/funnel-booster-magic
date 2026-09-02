@@ -43,17 +43,3 @@ img{max-width:100%}
 .summary-trust li{display:flex;align-items:center;gap:10px;font-size:13px;color:#444}
 .summary-trust svg{flex-shrink:0;color:var(--pink)}
 
-/* ---- modal PIX ---- */
-
-
-.pix-modal h3{margin:0 0 4px;font-size:20px}
-
-
-
-
-
-
-
-.pix-modal .checkout-button{display:flex;align-items:center;justify-content:center;gap:8px;width:100%}
-
-
