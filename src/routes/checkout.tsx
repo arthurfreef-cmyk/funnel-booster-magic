@@ -359,11 +359,31 @@ function CheckoutRoute() {
         </div>
 
         <aside className="order-summary">
-          <h2>resumo</h2>
+          <h2>resumo do pedido</h2>
+
+          <ul className="summary-items">
+            {items.map((item) => (
+              <li key={item.slug}>
+                <img alt={item.name} loading="lazy" src={item.image} width={56} height={56} />
+                <div>
+                  <p>{item.name}</p>
+                  <span>quantidade: {item.quantity}</span>
+                </div>
+                <strong>{formatPrice(item.price * item.quantity)}</strong>
+              </li>
+            ))}
+          </ul>
+
           <p>
             <span>Subtotal</span>
             <span>{formatPrice(subtotal)}</span>
           </p>
+          {savings > 0 && (
+            <p className="summary-savings">
+              <span>você economiza</span>
+              <span>-{formatPrice(savings)}</span>
+            </p>
+          )}
           <p>
             <span>Frete</span>
             <span>{formatPrice(shipping)}</span>
@@ -372,6 +392,13 @@ function CheckoutRoute() {
             <span>Total</span>
             <strong>{formatPrice(total)}</strong>
           </div>
+          <p className="summary-installments">ou em até 6x de {formatPrice(total / 6)} sem juros</p>
+
+          <ul className="summary-trust">
+            <li><span aria-hidden>⚡</span> pix com aprovação imediata</li>
+            <li><span aria-hidden>🔒</span> compra 100% segura</li>
+            <li><span aria-hidden>↩</span> troca fácil em até 7 dias</li>
+          </ul>
         </aside>
       </div>
     </div>
