@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 
 import { CardModal } from "@/components/CardModal";
 import { PixModal } from "@/components/PixModal";
+import { hasVisited } from "@/lib/product-visit";
 import { readAddress, saveAddress } from "@/lib/shipping-address";
 import { ORDER_BUMP } from "@/data/site";
 import { useCart } from "@/lib/cart";
@@ -95,6 +96,13 @@ function CheckoutRoute() {
     );
     setCepFilled(true);
   }, []);
+
+  // Ninguém finaliza sem antes conhecer o produto: leva à PDP do primeiro item.
+  useEffect(() => {
+    if (!hydrated || items.length === 0) return;
+    const pending = items.find((item) => !hasVisited(item.slug));
+    if (pending) void navigate({ to: "/$slug/p", params: { slug: pending.slug } });
+  }, [hydrated, items, navigate]);
 
   // Reserva do preço promocional (urgência real e visível).
   useEffect(() => {
