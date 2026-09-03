@@ -150,3 +150,25 @@ img{max-width:100%}
 .card-form input:focus{border-color:#ec2d7f;box-shadow:0 0 0 3px rgba(236,45,127,.12)}
 .card-form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .card-modal-secure{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;color:#777}
+
+/* Checkout: redução de fricção */
+.checkout-head{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.checkout-steps-hint{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+.checkout-reserve{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--pink-soft);border:1px solid #f7c6dc;color:#a3185a;border-radius:12px;padding:12px 16px;margin-bottom:18px;font-size:13.5px}
+.checkout-reserve strong{text-transform:lowercase;font-weight:700}
+.checkout-reserve b{font-variant-numeric:tabular-nums;font-size:15px}
+.field-error{display:block;margin-top:6px;font-size:12px;font-style:normal;color:#c00;font-weight:600}
+.checkout-form input.field-invalid{border-color:#e0464b;box-shadow:0 0 0 3px rgba(224,70,75,.12)}
+.checkout-cta{width:100%;height:56px;font-size:15px;gap:8px}
+.checkout-assurances{display:flex;flex-direction:column;gap:8px;margin-top:14px;padding:0;list-style:none}
+.checkout-assurances li{display:flex;align-items:center;gap:8px;font-size:13px;color:#555}
+.checkout-assurances svg{color:var(--pink);flex-shrink:0}
+.checkout-sticky-bar{display:none}
+@media(max-width:900px){
+  .checkout-sticky-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff;border-top:1px solid var(--line);padding:10px 14px;box-shadow:0 -6px 20px rgba(0,0,0,.08)}
+  .checkout-sticky-bar>div{display:flex;flex-direction:column;line-height:1.15}
+  .checkout-sticky-bar span{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#888}
+  .checkout-sticky-bar strong{font-size:18px}
+  .checkout-sticky-bar .checkout-button{flex:1;max-width:220px;height:48px}
+  .checkout-page.has-sticky-bar{padding-bottom:88px}
+}
