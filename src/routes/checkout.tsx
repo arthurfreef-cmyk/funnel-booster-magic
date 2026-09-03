@@ -525,10 +525,14 @@ function CheckoutRoute() {
                 </label>
               </div>
             </section>
+            </>
+            )}
 
+            {step === 3 && (
             <section className="checkout-form-section checkout-payment-section">
               <div className="checkout-form-heading">
                 <span>3</span>
+
                 <div>
                   <h3>pagamento</h3>
                   <p>O desconto promocional é válido somente no PIX.</p>
