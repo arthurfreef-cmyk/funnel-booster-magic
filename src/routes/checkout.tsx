@@ -835,8 +835,19 @@ function CheckoutRoute() {
         </div>
         <button className="checkout-button" disabled={loading} type="button" onClick={submitFromBar}>
           {loading ? <Loader2 className="pix-spin" size={16} /> : null}
-          {loading ? "gerando pix…" : method === "pix" ? "pagar com pix" : "pagar com cartão"}
+          {loading
+            ? "gerando pix…"
+            : step === 1
+              ? "continuar"
+              : step === 2
+                ? "ir para pagamento"
+                : step === 3
+                  ? "revisar pedido"
+                  : method === "pix"
+                    ? "pagar com pix"
+                    : "pagar com cartão"}
         </button>
+
       </div>
 
       {cardOpen && <CardModal amount={effectiveTotal} onClose={() => setCardOpen(false)} />}
