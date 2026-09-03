@@ -577,7 +577,15 @@ function CheckoutRoute() {
                   {err("state") && <em className="field-error">{err("state")}</em>}
                 </label>
               </div>
+              {error && <p className="form-error">{error}</p>}
+              <button className="checkout-button checkout-cta" type="submit">
+                continuar para pagamento
+              </button>
+              <button className="step-back" type="button" onClick={() => goTo(1)}>
+                voltar para a cesta
+              </button>
             </section>
+
             </>
             )}
 
