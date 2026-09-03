@@ -116,14 +116,7 @@ export function PrizeWheel() {
     }
   }, []);
 
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !spinning) close();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open, spinning, close]);
+  // Sem saída: a roleta só fecha depois de girar e ganhar o desconto.
 
   const spin = () => {
     if (spinning || won) return;
