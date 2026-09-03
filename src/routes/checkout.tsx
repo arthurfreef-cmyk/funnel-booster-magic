@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Bolt, Loader2, RefreshCcw, ShieldCheck } from "lucide-react";
+import { Bolt, Loader2, Lock, RefreshCcw, ShieldCheck, Truck } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 
 import { CardModal } from "@/components/CardModal";
@@ -15,10 +15,10 @@ import { trackInitiateCheckout, trackPurchase } from "@/lib/pixels";
 export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
-      { title: "Checkout | wepink" },
-      { name: "description", content: "Finalize seu pedido wepink em poucos passos." },
-      { property: "og:title", content: "Checkout | wepink" },
-      { property: "og:description", content: "Finalize seu pedido wepink em poucos passos." },
+      { title: "Checkout seguro | wepink" },
+      { name: "description", content: "Finalize seu pedido wepink em poucos passos, com pagamento PIX aprovado na hora." },
+      { property: "og:title", content: "Checkout seguro | wepink" },
+      { property: "og:description", content: "Finalize seu pedido wepink em poucos passos, com pagamento PIX aprovado na hora." },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -53,17 +53,25 @@ const EMPTY: FormState = {
   state: "",
 };
 
+type FieldErrors = Partial<Record<keyof FormState, string>>;
+
+/** Tempo de reserva do preço promocional, em segundos. */
+const RESERVE_SECONDS = 15 * 60;
+
 function CheckoutRoute() {
   const { items, subtotal, shipping, add, clear, hydrated } = useCart();
   const navigate = useNavigate();
   const [form, setForm] = useState<FormState>(EMPTY);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [cepLoading, setCepLoading] = useState(false);
   const [cepFilled, setCepFilled] = useState(false);
   const [loading, setLoading] = useState(false);
   const [payment, setPayment] = useState<PixResult | null>(null);
   const [cardOpen, setCardOpen] = useState(false);
+  const [remaining, setRemaining] = useState(RESERVE_SECONDS);
   const numberRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const cepAbortRef = useRef<AbortController | null>(null);
   const bumpAdded = items.some((item) => item.slug === ORDER_BUMP.slug);
 
@@ -86,6 +94,14 @@ function CheckoutRoute() {
     setCepFilled(true);
   }, []);
 
+  // Reserva do preço promocional (urgência real e visível).
+  useEffect(() => {
+    const id = window.setInterval(() => setRemaining((s) => (s > 0 ? s - 1 : 0)), 1000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  const clock = `${String(Math.floor(remaining / 60)).padStart(2, "0")}:${String(remaining % 60).padStart(2, "0")}`;
+
   /** Método de pagamento: PIX tem preço promocional; cartão volta ao preço normal. */
   const [method, setMethod] = useState<"pix" | "card">("pix");
   const cardSubtotal = items.reduce(
@@ -94,18 +110,21 @@ function CheckoutRoute() {
   );
   const effectiveSubtotal = method === "card" ? cardSubtotal : subtotal;
   const effectiveTotal = effectiveSubtotal + shipping;
+  const savings = cardSubtotal - subtotal;
   const itemPrice = (item: (typeof items)[number]) =>
     method === "card" && item.listPrice > item.price ? item.listPrice : item.price;
 
-
-  const update = (key: keyof FormState) => (event: { target: { value: string } }) =>
+  const update = (key: keyof FormState) => (event: { target: { value: string } }) => {
     setForm((current) => ({ ...current, [key]: event.target.value }));
+    setFieldErrors((current) => ({ ...current, [key]: undefined }));
+  };
 
   /** Formata o CEP e dispara a busca do endereço ao completar 8 dígitos. */
   const onCepChange = (event: { target: { value: string } }) => {
     const digits = event.target.value.replace(/\D/g, "").slice(0, 8);
     const masked = digits.length > 5 ? `${digits.slice(0, 5)}-${digits.slice(5)}` : digits;
     setForm((current) => ({ ...current, zip: masked }));
+    setFieldErrors((current) => ({ ...current, zip: undefined }));
     setCepFilled(false);
     if (digits.length === 8) void lookupCep(digits);
   };
@@ -118,6 +137,7 @@ function CheckoutRoute() {
       .replace(/(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
       .replace(/(\d{3})\.(\d{3})\.(\d{3})(\d{1,2})/, "$1.$2.$3-$4");
     setForm((current) => ({ ...current, document: masked }));
+    setFieldErrors((current) => ({ ...current, document: undefined }));
   };
 
   /** Máscara de telefone: (00) 00000-0000. */
@@ -130,6 +150,7 @@ function CheckoutRoute() {
           ? `(${d.slice(0, 2)}) ${d.slice(2)}`
           : d;
     setForm((current) => ({ ...current, phone: masked }));
+    setFieldErrors((current) => ({ ...current, phone: undefined }));
   };
 
   /** Consulta o ViaCEP e preenche rua, bairro, cidade e UF automaticamente. */
@@ -143,7 +164,7 @@ function CheckoutRoute() {
         signal: controller.signal,
       });
       const data = (await response.json()) as {
-        erro?: boolean;
+        erro?: boolean | string;
         logradouro?: string;
         bairro?: string;
         localidade?: string;
@@ -151,7 +172,7 @@ function CheckoutRoute() {
       };
       if (controller.signal.aborted) return;
       if (data.erro) {
-        setError("CEP não encontrado. Confira e tente novamente.");
+        setFieldErrors((current) => ({ ...current, zip: "CEP não encontrado. Confira o número." }));
         return;
       }
       setForm((current) => ({
@@ -173,30 +194,38 @@ function CheckoutRoute() {
       numberRef.current?.focus();
     } catch {
       if (!controller.signal.aborted) {
-        setError("Não foi possível buscar o CEP. Preencha o endereço manualmente.");
+        // Não trava a compra: deixa o cliente preencher manualmente.
+        setCepFilled(true);
       }
     } finally {
       if (!controller.signal.aborted) setCepLoading(false);
     }
   };
 
-  /** Valida os dados mínimos antes de acionar o gateway. */
+  /** Valida os dados mínimos e aponta exatamente o campo com problema. */
   const validate = (): boolean => {
     setError(null);
     if (items.length === 0) {
       setError("Sua cesta está vazia.");
       return false;
     }
-    if (!form.name.trim() || !form.email.includes("@") || form.document.replace(/\D/g, "").length < 11) {
-      setError("Confira nome, e-mail e CPF antes de continuar.");
-      return false;
-    }
-    if (form.phone.replace(/\D/g, "").length < 10) {
-      setError("Informe um celular válido com DDD.");
-      return false;
-    }
-    if (!cepFilled || !form.street.trim() || !form.number.trim() || !form.city.trim() || !form.state.trim()) {
-      setError("Complete o endereço de entrega (CEP e número).");
+    const next: FieldErrors = {};
+    if (form.name.trim().split(" ").filter(Boolean).length < 2) next.name = "Informe nome e sobrenome.";
+    if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) next.email = "E-mail inválido.";
+    if (form.document.replace(/\D/g, "").length < 11) next.document = "CPF incompleto.";
+    if (form.phone.replace(/\D/g, "").length < 10) next.phone = "Celular com DDD.";
+    if (form.zip.replace(/\D/g, "").length < 8) next.zip = "CEP incompleto.";
+    if (!form.street.trim()) next.street = "Informe a rua.";
+    if (!form.number.trim()) next.number = "Informe o número.";
+    if (!form.city.trim()) next.city = "Informe a cidade.";
+    if (!form.state.trim()) next.state = "UF.";
+    setFieldErrors(next);
+
+    const first = Object.keys(next)[0];
+    if (first) {
+      const el = formRef.current?.querySelector<HTMLInputElement>(`[data-field="${first}"]`);
+      el?.scrollIntoView({ behavior: "smooth", block: "center" });
+      el?.focus({ preventScroll: true });
       return false;
     }
     return true;
@@ -252,6 +281,11 @@ function CheckoutRoute() {
     void navigate({ to: "/obrigado" });
   };
 
+  const submitFromBar = () => formRef.current?.requestSubmit();
+
+  const err = (key: keyof FormState) => fieldErrors[key];
+  const cls = (key: keyof FormState, autofilled = false) =>
+    err(key) ? "field-invalid" : autofilled && cepFilled ? "autofilled" : undefined;
 
   if (hydrated && items.length === 0) {
     return (
@@ -271,26 +305,255 @@ function CheckoutRoute() {
   }
 
   return (
-    <div className="checkout-page">
+    <div className="checkout-page has-sticky-bar">
       <nav className="breadcrumbs">
         <Link to="/">home</Link>
         <span>/</span>
         checkout
       </nav>
-      <h1>checkout</h1>
+
+      <div className="checkout-head">
+        <h1>checkout seguro</h1>
+        <p className="checkout-steps-hint">
+          <Lock aria-hidden size={14} /> ambiente criptografado · leva menos de 1 minuto
+        </p>
+      </div>
+
+      {remaining > 0 && (
+        <div className="checkout-reserve" role="status">
+          <strong>preço promocional reservado</strong>
+          <span>
+            expira em <b>{clock}</b>
+          </span>
+        </div>
+      )}
 
       <div className="checkout-layout">
         <div>
-          {items.map((item) => (
-            <div className="checkout-line" key={item.slug}>
-              <img alt={item.name} height={130} loading="lazy" src={item.image} width={130} />
-              <div>
-                <h2>{item.name}</h2>
-                <p>{formatPrice(item.price)}</p>
+          <form className="checkout-form" ref={formRef} onSubmit={onSubmit}>
+            <section className="checkout-form-section">
+              <div className="checkout-form-heading">
+                <span>1</span>
+                <div>
+                  <h3>dados pessoais</h3>
+                  <p>Usamos seus dados apenas para emitir e entregar o pedido.</p>
+                </div>
               </div>
-              <strong>x{item.quantity}</strong>
-            </div>
-          ))}
+              <label>
+                <span>nome completo</span>
+                <input
+                  autoComplete="name"
+                  className={cls("name")}
+                  data-field="name"
+                  placeholder="Seu nome completo"
+                  value={form.name}
+                  onChange={update("name")}
+                />
+                {err("name") && <em className="field-error">{err("name")}</em>}
+              </label>
+              <label>
+                <span>e-mail</span>
+                <input
+                  autoComplete="email"
+                  className={cls("email")}
+                  data-field="email"
+                  inputMode="email"
+                  placeholder="voce@email.com"
+                  type="email"
+                  value={form.email}
+                  onChange={update("email")}
+                />
+                {err("email") && <em className="field-error">{err("email")}</em>}
+              </label>
+              <div className="checkout-field-row city-state">
+                <label>
+                  <span>CPF</span>
+                  <input
+                    autoComplete="off"
+                    className={cls("document")}
+                    data-field="document"
+                    inputMode="numeric"
+                    placeholder="000.000.000-00"
+                    value={form.document}
+                    onChange={onCpfChange}
+                  />
+                  {err("document") && <em className="field-error">{err("document")}</em>}
+                </label>
+                <label>
+                  <span>celular com DDD</span>
+                  <input
+                    autoComplete="tel-national"
+                    className={cls("phone")}
+                    data-field="phone"
+                    inputMode="tel"
+                    placeholder="(00) 00000-0000"
+                    value={form.phone}
+                    onChange={onPhoneChange}
+                  />
+                  {err("phone") && <em className="field-error">{err("phone")}</em>}
+                </label>
+              </div>
+            </section>
+
+            <section className="checkout-form-section">
+              <div className="checkout-form-heading">
+                <span>2</span>
+                <div>
+                  <h3>endereço de entrega</h3>
+                  <p>Enviamos para todo o Brasil.</p>
+                </div>
+              </div>
+              <label>
+                <span>CEP {cepLoading && <em>buscando endereço…</em>}</span>
+                <input
+                  autoComplete="postal-code"
+                  className={cls("zip")}
+                  data-field="zip"
+                  inputMode="numeric"
+                  placeholder="00000-000"
+                  value={form.zip}
+                  onChange={onCepChange}
+                />
+                {err("zip") && <em className="field-error">{err("zip")}</em>}
+              </label>
+              <label>
+                <span>rua</span>
+                <input
+                  autoComplete="address-line1"
+                  className={cls("street", true)}
+                  data-field="street"
+                  placeholder="Rua / avenida"
+                  value={form.street}
+                  onChange={update("street")}
+                />
+                {err("street") && <em className="field-error">{err("street")}</em>}
+              </label>
+              <div className="checkout-field-row number-complement">
+                <label>
+                  <span>número</span>
+                  <input
+                    className={cls("number")}
+                    data-field="number"
+                    inputMode="numeric"
+                    placeholder="123"
+                    ref={numberRef}
+                    value={form.number}
+                    onChange={update("number")}
+                  />
+                  {err("number") && <em className="field-error">{err("number")}</em>}
+                </label>
+                <label>
+                  <span>complemento <small>(opcional)</small></span>
+                  <input placeholder="apto, bloco…" value={form.complement} onChange={update("complement")} />
+                </label>
+              </div>
+              <label>
+                <span>bairro</span>
+                <input
+                  autoComplete="address-level3"
+                  className={cls("district", true)}
+                  data-field="district"
+                  placeholder="Bairro"
+                  value={form.district}
+                  onChange={update("district")}
+                />
+              </label>
+              <div className="checkout-field-row city-state">
+                <label>
+                  <span>cidade</span>
+                  <input
+                    autoComplete="address-level2"
+                    className={cls("city", true)}
+                    data-field="city"
+                    placeholder="Cidade"
+                    value={form.city}
+                    onChange={update("city")}
+                  />
+                  {err("city") && <em className="field-error">{err("city")}</em>}
+                </label>
+                <label>
+                  <span>UF</span>
+                  <input
+                    autoComplete="address-level1"
+                    className={cls("state", true)}
+                    data-field="state"
+                    maxLength={2}
+                    placeholder="UF"
+                    value={form.state}
+                    onChange={update("state")}
+                  />
+                  {err("state") && <em className="field-error">{err("state")}</em>}
+                </label>
+              </div>
+            </section>
+
+            <section className="checkout-form-section checkout-payment-section">
+              <div className="checkout-form-heading">
+                <span>3</span>
+                <div>
+                  <h3>pagamento</h3>
+                  <p>O desconto promocional é válido somente no PIX.</p>
+                </div>
+              </div>
+
+              <div className="pay-methods" role="radiogroup" aria-label="Método de pagamento">
+                <label className={method === "pix" ? "pay-method active" : "pay-method"}>
+                  <input
+                    checked={method === "pix"}
+                    name="payment-method"
+                    type="radio"
+                    onChange={() => setMethod("pix")}
+                  />
+                  <div>
+                    <strong>PIX</strong>
+                    <span>aprovação imediata · desconto mantido</span>
+                  </div>
+                  <em>recomendado</em>
+                </label>
+                <label className={method === "card" ? "pay-method active" : "pay-method"}>
+                  <input
+                    checked={method === "card"}
+                    name="payment-method"
+                    type="radio"
+                    onChange={() => setMethod("card")}
+                  />
+                  <div>
+                    <strong>cartão de crédito</strong>
+                    <span>preço normal, sem o desconto do PIX</span>
+                  </div>
+                </label>
+              </div>
+              {method === "card" && savings > 0 && (
+                <p className="pay-warning">
+                  No cartão você perde {formatPrice(savings)} de desconto. Pagando no PIX o total fica{" "}
+                  <strong>{formatPrice(subtotal + shipping)}</strong>.
+                </p>
+              )}
+
+              {error && <p className="form-error">{error}</p>}
+
+              <button className="checkout-button checkout-cta" disabled={loading} type="submit">
+                {loading ? <Loader2 className="pix-spin" size={16} /> : <Lock aria-hidden size={16} />}
+                {loading
+                  ? "gerando pix…"
+                  : method === "pix"
+                    ? `pagar ${formatPrice(effectiveTotal)} com pix`
+                    : `pagar ${formatPrice(effectiveTotal)} com cartão`}
+              </button>
+
+              <ul className="checkout-assurances">
+                <li>
+                  <ShieldCheck aria-hidden size={16} /> pagamento processado com criptografia
+                </li>
+                <li>
+                  <Truck aria-hidden size={16} /> envio em até 24h após a confirmação
+                </li>
+                <li>
+                  <RefreshCcw aria-hidden size={16} /> 7 dias para troca ou devolução
+                </li>
+              </ul>
+            </section>
+          </form>
 
           <section className="order-bump">
             <div className="order-bump-heading">
@@ -314,173 +577,6 @@ function CheckoutRoute() {
               {bumpAdded ? "adicionado à cesta ✓" : "sim, quero adicionar"}
             </button>
           </section>
-
-          <form className="checkout-form" onSubmit={onSubmit}>
-            <section className="checkout-form-section">
-              <div className="checkout-form-heading">
-                <span>1</span>
-                <div>
-                  <h3>dados pessoais</h3>
-                  <p>Usamos seus dados apenas para emitir e entregar o pedido.</p>
-                </div>
-              </div>
-              <label>
-                <span>nome completo</span>
-                <input autoComplete="name" placeholder="Seu nome completo" value={form.name} onChange={update("name")} />
-              </label>
-              <label>
-                <span>e-mail</span>
-                <input autoComplete="email" placeholder="voce@email.com" type="email" value={form.email} onChange={update("email")} />
-              </label>
-              <div className="checkout-field-row city-state">
-                <label>
-                  <span>CPF</span>
-                  <input
-                    autoComplete="off"
-                    inputMode="numeric"
-                    placeholder="000.000.000-00"
-                    value={form.document}
-                    onChange={onCpfChange}
-                  />
-                </label>
-                <label>
-                  <span>celular com DDD</span>
-                  <input
-                    autoComplete="tel-national"
-                    inputMode="tel"
-                    placeholder="(00) 00000-0000"
-                    value={form.phone}
-                    onChange={onPhoneChange}
-                  />
-                </label>
-              </div>
-            </section>
-
-            <section className="checkout-form-section">
-              <div className="checkout-form-heading">
-                <span>2</span>
-                <div>
-                  <h3>endereço de entrega</h3>
-                  <p>Enviamos para todo o Brasil.</p>
-                </div>
-              </div>
-              <label>
-                <span>CEP {cepLoading && <em>buscando endereço…</em>}</span>
-                <input
-                  autoComplete="postal-code"
-                  inputMode="numeric"
-                  placeholder="00000-000"
-                  value={form.zip}
-                  onChange={onCepChange}
-                />
-              </label>
-              <label>
-                <span>rua</span>
-                <input
-                  autoComplete="address-line1"
-                  className={cepFilled ? "autofilled" : undefined}
-                  value={form.street}
-                  onChange={update("street")}
-                />
-              </label>
-              <div className="checkout-field-row number-complement">
-                <label>
-                  <span>número</span>
-                  <input ref={numberRef} inputMode="numeric" placeholder="123" value={form.number} onChange={update("number")} />
-                </label>
-                <label>
-                  <span>complemento</span>
-                  <input placeholder="opcional" value={form.complement} onChange={update("complement")} />
-                </label>
-              </div>
-              <label>
-                <span>bairro</span>
-                <input
-                  autoComplete="address-level3"
-                  className={cepFilled ? "autofilled" : undefined}
-                  value={form.district}
-                  onChange={update("district")}
-                />
-              </label>
-              <div className="checkout-field-row city-state">
-                <label>
-                  <span>cidade</span>
-                  <input
-                    autoComplete="address-level2"
-                    className={cepFilled ? "autofilled" : undefined}
-                    value={form.city}
-                    onChange={update("city")}
-                  />
-                </label>
-                <label>
-                  <span>UF</span>
-                  <input
-                    autoComplete="address-level1"
-                    className={cepFilled ? "autofilled" : undefined}
-                    maxLength={2}
-                    value={form.state}
-                    onChange={update("state")}
-                  />
-                </label>
-              </div>
-            </section>
-
-            <section className="checkout-form-section checkout-payment-section">
-              <div className="checkout-form-heading">
-                <span>3</span>
-                <div>
-                  <h3>pagamento</h3>
-                  <p>Escolha como pagar. O desconto promocional é válido somente no PIX.</p>
-                </div>
-              </div>
-
-              <div className="pay-methods" role="radiogroup" aria-label="Método de pagamento">
-                <label className={method === "pix" ? "pay-method active" : "pay-method"}>
-                  <input
-                    checked={method === "pix"}
-                    name="payment-method"
-                    type="radio"
-                    onChange={() => setMethod("pix")}
-                  />
-                  <div>
-                    <strong>PIX</strong>
-                    <span>preço promocional com até 70% OFF + aprovação imediata</span>
-                  </div>
-                  <em>recomendado</em>
-                </label>
-                <label className={method === "card" ? "pay-method active" : "pay-method"}>
-                  <input
-                    checked={method === "card"}
-                    name="payment-method"
-                    type="radio"
-                    onChange={() => setMethod("card")}
-                  />
-                  <div>
-                    <strong>cartão de crédito</strong>
-                    <span>preço normal, sem o desconto promocional do PIX</span>
-                  </div>
-                </label>
-              </div>
-              {method === "card" && (
-                <p className="pay-warning">
-                  Atenção: a promoção é válida somente no PIX. No cartão o valor cobrado é o preço
-                  normal de cada produto.
-                </p>
-              )}
-
-              {error && <p className="form-error">{error}</p>}
-              <button className="checkout-button" disabled={loading} type="submit">
-                {loading ? <Loader2 className="pix-spin" size={16} /> : null}
-                {loading
-                  ? "gerando pix…"
-                  : method === "pix"
-                    ? "pagar com pix"
-                    : "pagar com cartão"}
-              </button>
-
-            </section>
-
-          </form>
         </div>
 
         <aside className="order-summary">
@@ -529,6 +625,17 @@ function CheckoutRoute() {
             </li>
           </ul>
         </aside>
+      </div>
+
+      <div className="checkout-sticky-bar">
+        <div>
+          <span>total</span>
+          <strong>{formatPrice(effectiveTotal)}</strong>
+        </div>
+        <button className="checkout-button" disabled={loading} type="button" onClick={submitFromBar}>
+          {loading ? <Loader2 className="pix-spin" size={16} /> : null}
+          {loading ? "gerando pix…" : method === "pix" ? "pagar com pix" : "pagar com cartão"}
+        </button>
       </div>
 
       {cardOpen && <CardModal amount={effectiveTotal} onClose={() => setCardOpen(false)} />}
