@@ -233,9 +233,41 @@ function CheckoutRoute() {
     return true;
   };
 
+  /** Avança de etapa validando somente o que a etapa exige. */
+  const goTo = (next: 1 | 2 | 3 | 4) => {
+    setError(null);
+    setStep(next);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const nextFromStep = () => {
+    if (step === 1) {
+      if (items.length === 0) {
+        setError("Sua cesta está vazia.");
+        return;
+      }
+      trackInitiateCheckout(effectiveTotal, items);
+      goTo(2);
+      return;
+    }
+    if (step === 2) {
+      if (!validate()) return;
+      goTo(3);
+      return;
+    }
+    if (step === 3) {
+      goTo(4);
+    }
+  };
+
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (step !== 4) {
+      nextFromStep();
+      return;
+    }
     if (!validate() || loading) return;
+
     if (method === "card") {
       setCardOpen(true);
       return;
