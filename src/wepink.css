@@ -200,3 +200,11 @@ img{max-width:100%}
 .confirm-block strong{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#888;margin-bottom:6px}
 .confirm-block span{display:block;font-size:13.5px;line-height:1.5;color:#333}
 .confirm-block>div>button{position:absolute;top:10px;right:12px;background:none;border:0;padding:0;font-size:12px;font-weight:700;color:#ec2d7f;cursor:pointer}
+.checkout-shell{min-height:100vh;background:#faf7f8}
+.checkout-shell-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;background:#fff;border-bottom:1px solid var(--line)}
+.checkout-shell-header .brand img{display:block}
+.checkout-exit{font-size:13px;color:#777;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:7px 14px}
+.checkout-exit:hover{color:#ec2d7f;border-color:#ec2d7f}
+.order-summary.inline-summary{margin:16px 0;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px}
+.order-summary.inline-summary h2{margin:0 0 10px;font-size:15px}
+.cep-resolved{margin:6px 0 2px;font-size:13px;color:#4a4a4a;background:#f4fbf5;border:1px solid #cdead2;border-radius:8px;padding:10px 12px}
