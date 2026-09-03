@@ -184,12 +184,8 @@ export function PrizeWheel() {
       className="drawer-layer wheel-layer"
       role="dialog"
     >
-      <button aria-label="Fechar roleta" className="drawer-scrim" type="button" onClick={close} />
+      <div aria-hidden className="drawer-scrim" />
       <div className="wheel-modal">
-        <button aria-label="Fechar" className="wheel-close" type="button" onClick={close}>
-          ×
-        </button>
-
         <span className="wheel-trust">✓ promoção oficial wepink</span>
         <h2>
           {won ? "desconto liberado!" : tryAgain ? "quase! tente de novo" : "gire e garanta seu desconto"}
