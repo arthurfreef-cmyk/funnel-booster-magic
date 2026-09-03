@@ -438,6 +438,38 @@ function CheckoutRoute() {
                   </li>
                 ))}
               </ul>
+              <div className="order-summary inline-summary">
+                <h2>resumo do pedido</h2>
+                <p>
+                  <span>Subtotal</span>
+                  <span>{formatPrice(effectiveSubtotal)}</span>
+                </p>
+                {cepFilled && (
+                  <p>
+                    <span>Frete</span>
+                    <span>{formatPrice(shipping)}</span>
+                  </p>
+                )}
+                <div>
+                  <span>Total</span>
+                  <strong>{formatPrice(effectiveSubtotal + (cepFilled ? shipping : 0))}</strong>
+                </div>
+                <ul className="summary-trust">
+                  <li>
+                    <Bolt aria-hidden size={18} />
+                    <span>pix com aprovação imediata</span>
+                  </li>
+                  <li>
+                    <ShieldCheck aria-hidden size={18} />
+                    <span>compra 100% segura</span>
+                  </li>
+                  <li>
+                    <RefreshCcw aria-hidden size={18} />
+                    <span>troca fácil em até 7 dias</span>
+                  </li>
+                </ul>
+              </div>
+
               {error && <p className="form-error">{error}</p>}
               <button className="checkout-button checkout-cta" type="submit">
                 continuar para identificação
