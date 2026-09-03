@@ -358,6 +358,26 @@ function CheckoutRoute() {
         </p>
       </div>
 
+      <ol className="checkout-stepper">
+        {(["carrinho", "identificação", "pagamento", "confirmação"] as const).map((label, index) => {
+          const value = (index + 1) as 1 | 2 | 3 | 4;
+          const state = step === value ? "current" : step > value ? "done" : "todo";
+          return (
+            <li key={label} className={`step-${state}`}>
+              <button
+                disabled={state === "todo"}
+                type="button"
+                onClick={() => state === "done" && goTo(value)}
+              >
+                <em>{state === "done" ? "✓" : value}</em>
+                <span>{label}</span>
+              </button>
+            </li>
+          );
+        })}
+      </ol>
+
+
       {remaining > 0 && (
         <div className="checkout-reserve" role="status">
           <strong>preço promocional reservado</strong>
