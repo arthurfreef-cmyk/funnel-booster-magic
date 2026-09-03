@@ -594,28 +594,31 @@ function CheckoutRoute() {
             </section>
           </form>
 
-          <section className="order-bump">
-            <div className="order-bump-heading">
-              <span>oferta única</span>
-              <strong>só nesta compra</strong>
-            </div>
-            <div className="order-bump-content">
-              <img alt={ORDER_BUMP.name} loading="lazy" src={ORDER_BUMP.image} />
-              <div>
-                <h3>{ORDER_BUMP.name}</h3>
-                <p>{ORDER_BUMP.description}</p>
-                <strong>{formatPrice(ORDER_BUMP.price)}</strong>
+          {step === 3 && (
+            <section className="order-bump">
+              <div className="order-bump-heading">
+                <span>oferta única</span>
+                <strong>só nesta compra</strong>
               </div>
-            </div>
-            <button
-              className={bumpAdded ? "added" : undefined}
-              disabled={bumpAdded}
-              type="button"
-              onClick={() => add(ORDER_BUMP)}
-            >
-              {bumpAdded ? "adicionado à cesta ✓" : "sim, quero adicionar"}
-            </button>
-          </section>
+              <div className="order-bump-content">
+                <img alt={ORDER_BUMP.name} loading="lazy" src={ORDER_BUMP.image} />
+                <div>
+                  <h3>{ORDER_BUMP.name}</h3>
+                  <p>{ORDER_BUMP.description}</p>
+                  <strong>{formatPrice(ORDER_BUMP.price)}</strong>
+                </div>
+              </div>
+              <button
+                className={bumpAdded ? "added" : undefined}
+                disabled={bumpAdded}
+                type="button"
+                onClick={() => add(ORDER_BUMP)}
+              >
+                {bumpAdded ? "adicionado à cesta ✓" : "sim, quero adicionar"}
+              </button>
+            </section>
+          )}
+
         </div>
 
         <aside className="order-summary">
