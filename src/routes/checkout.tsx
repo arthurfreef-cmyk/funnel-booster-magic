@@ -100,7 +100,7 @@ function CheckoutRoute() {
   // Ninguém finaliza sem antes conhecer o produto: leva à PDP do primeiro item.
   useEffect(() => {
     if (!hydrated || items.length === 0) return;
-    const pending = items.find((item) => !hasVisited(item.slug));
+    const pending = items.find((item) => item.slug !== ORDER_BUMP.slug && !hasVisited(item.slug));
     if (pending) void navigate({ to: "/$slug/p", params: { slug: pending.slug } });
   }, [hydrated, items, navigate]);
 
