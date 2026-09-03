@@ -266,7 +266,12 @@ function CheckoutRoute() {
       nextFromStep();
       return;
     }
-    if (!validate() || loading) return;
+    if (loading) return;
+    if (!validate()) {
+      setStep(2);
+      return;
+    }
+
 
     if (method === "card") {
       setCardOpen(true);
