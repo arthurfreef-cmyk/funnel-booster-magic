@@ -44,7 +44,7 @@ const CartContext = createContext<CartContextValue | null>(null);
 function readStorage(): CartItem[] {
   if (typeof window === "undefined") return [];
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const raw = window.sessionStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
     const parsed: unknown = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
@@ -75,7 +75,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!hydrated) return;
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(items));
     } catch {
       /* armazenamento indisponível: o carrinho segue apenas em memória */
     }
