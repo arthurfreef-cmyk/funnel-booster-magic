@@ -1,10 +1,11 @@
 import { Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { Shelf } from "@/components/Shelf";
 import { BADGE_BEST_SELLER, BADGE_LANCAMENTO, PRODUCTS, type Product } from "@/data/site";
 import { useCart } from "@/lib/cart";
 import { discountPercent, formatPrice, installment } from "@/lib/format";
+import { markVisited } from "@/lib/product-visit";
 
 export interface ProductDetailProps {
   product: Product;
@@ -21,6 +22,11 @@ export function ProductDetail({ product }: ProductDetailProps) {
   const [active, setActive] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [sku, setSku] = useState(0);
+
+  // Registra a visita à página do produto (pré-requisito para o checkout).
+  useEffect(() => {
+    markVisited(product.slug);
+  }, [product.slug]);
 
   const discount = discountPercent(product.listPrice, product.price);
   const badge =
