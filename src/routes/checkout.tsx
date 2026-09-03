@@ -53,7 +53,7 @@ const EMPTY: FormState = {
   state: "",
 };
 
-type FieldErrors = Partial<Record<keyof FormState, string>>;
+type FieldErrors = { [K in keyof FormState]?: string | undefined };
 
 /** Tempo de reserva do preço promocional, em segundos. */
 const RESERVE_SECONDS = 15 * 60;
