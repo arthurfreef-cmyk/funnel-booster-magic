@@ -571,13 +571,11 @@ function CheckoutRoute() {
 
               {error && <p className="form-error">{error}</p>}
 
-              <button className="checkout-button checkout-cta" disabled={loading} type="submit">
-                {loading ? <Loader2 className="pix-spin" size={16} /> : <Lock aria-hidden size={16} />}
-                {loading
-                  ? "gerando pix…"
-                  : method === "pix"
-                    ? `pagar ${formatPrice(effectiveTotal)} com pix`
-                    : `pagar ${formatPrice(effectiveTotal)} com cartão`}
+              <button className="checkout-button checkout-cta" type="submit">
+                revisar pedido
+              </button>
+              <button className="step-back" type="button" onClick={() => goTo(2)}>
+                voltar para identificação
               </button>
 
               <ul className="checkout-assurances">
@@ -592,7 +590,82 @@ function CheckoutRoute() {
                 </li>
               </ul>
             </section>
+            )}
+
+            {step === 4 && (
+            <section className="checkout-form-section">
+              <div className="checkout-form-heading">
+                <span>4</span>
+                <div>
+                  <h3>confirmação</h3>
+                  <p>Revise os dados e finalize o pagamento.</p>
+                </div>
+              </div>
+
+              <div className="confirm-block">
+                <div>
+                  <strong>dados</strong>
+                  <span>{form.name}</span>
+                  <span>{form.email}</span>
+                  <span>
+                    {form.document} · {form.phone}
+                  </span>
+                  <button type="button" onClick={() => goTo(2)}>
+                    alterar
+                  </button>
+                </div>
+                <div>
+                  <strong>entrega</strong>
+                  <span>
+                    {form.street}, {form.number}
+                    {form.complement ? ` · ${form.complement}` : ""}
+                  </span>
+                  <span>
+                    {form.district} · {form.city}/{form.state} · {form.zip}
+                  </span>
+                  <button type="button" onClick={() => goTo(2)}>
+                    alterar
+                  </button>
+                </div>
+                <div>
+                  <strong>pagamento</strong>
+                  <span>{method === "pix" ? "PIX · aprovação imediata" : "cartão de crédito"}</span>
+                  <span>total {formatPrice(effectiveTotal)}</span>
+                  <button type="button" onClick={() => goTo(3)}>
+                    alterar
+                  </button>
+                </div>
+              </div>
+
+              {error && <p className="form-error">{error}</p>}
+
+              <button className="checkout-button checkout-cta" disabled={loading} type="submit">
+                {loading ? <Loader2 className="pix-spin" size={16} /> : <Lock aria-hidden size={16} />}
+                {loading
+                  ? "gerando pix…"
+                  : method === "pix"
+                    ? `pagar ${formatPrice(effectiveTotal)} com pix`
+                    : `pagar ${formatPrice(effectiveTotal)} com cartão`}
+              </button>
+              <button className="step-back" type="button" onClick={() => goTo(3)}>
+                voltar para pagamento
+              </button>
+
+              <ul className="checkout-assurances">
+                <li>
+                  <ShieldCheck aria-hidden size={16} /> pagamento processado com criptografia
+                </li>
+                <li>
+                  <Truck aria-hidden size={16} /> envio em até 24h após a confirmação
+                </li>
+                <li>
+                  <RefreshCcw aria-hidden size={16} /> 7 dias para troca ou devolução
+                </li>
+              </ul>
+            </section>
+            )}
           </form>
+
 
           {step === 3 && (
             <section className="order-bump">
