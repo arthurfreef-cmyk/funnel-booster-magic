@@ -238,8 +238,8 @@ export function PrizeWheel() {
         {won ? (
           <>
             <p className="wheel-result">
-              Você ganhou <strong>{PRIZES[WINNING_INDEX]!.label}</strong> — válido por{" "}
-              <strong>{formatClock(remaining)}</strong>.
+              Você ganhou <strong>{PRIZES[WINNING_INDEX]!.label}</strong> — já aplicado em todos os
+              produtos da loja.
             </p>
             <button className="checkout-button" type="button" onClick={close}>
               aproveitar agora
