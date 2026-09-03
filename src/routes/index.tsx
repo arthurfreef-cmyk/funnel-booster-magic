@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 
 import { HeroSlider } from "@/components/HeroSlider";
 import { Shelf } from "@/components/Shelf";
@@ -96,6 +96,42 @@ function Newsletter() {
   );
 }
 
+/** Só carrega o embed do Instagram quando ele chega perto da viewport. */
+function InstagramEmbed() {
+  const ref = useRef<HTMLElement | null>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node || visible) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "300px" },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [visible]);
+
+  return (
+    <section className="instagram-section" ref={ref}>
+      <h2>@wepink</h2>
+      {visible && (
+        <iframe
+          className="instagram-frame"
+          loading="lazy"
+          src="https://www.instagram.com/wepink/embed"
+          title="Instagram wepink"
+        />
+      )}
+    </section>
+  );
+}
+
 function Home() {
   const featuredDiscount = discountPercent(FEATURED.listPrice, FEATURED.price);
 
@@ -130,15 +166,7 @@ function Home() {
 
       <Newsletter />
 
-      <section className="instagram-section">
-        <h2>@wepink</h2>
-        <iframe
-          className="instagram-frame"
-          loading="lazy"
-          src="https://www.instagram.com/wepink/embed"
-          title="Instagram wepink"
-        />
-      </section>
+      <InstagramEmbed />
     </>
   );
 }

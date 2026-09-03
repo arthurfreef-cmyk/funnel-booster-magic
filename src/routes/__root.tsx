@@ -100,6 +100,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap",
       },
       { rel: "preconnect", href: "https://wepink.vtexassets.com" },
+      { rel: "dns-prefetch", href: "https://viacep.com.br" },
+      { rel: "dns-prefetch", href: "https://connect.facebook.net" },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
 
