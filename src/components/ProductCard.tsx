@@ -2,7 +2,6 @@ import { Link } from "@tanstack/react-router";
 import { memo } from "react";
 
 import { BADGE_BEST_SELLER, BADGE_LANCAMENTO, CART_ICON, type Product } from "@/data/site";
-import { useCart } from "@/lib/cart";
 import { discountPercent, formatPrice, installment } from "@/lib/format";
 
 export interface ProductCardProps {
@@ -18,7 +17,6 @@ function badgeSrc(badge: Product["badge"]): { src: string; alt: string } | null 
 }
 
 function ProductCardBase({ product, priority = false }: ProductCardProps) {
-  const { add } = useCart();
   const discount = discountPercent(product.listPrice, product.price);
   const badge = badgeSrc(product.badge);
 
@@ -54,18 +52,19 @@ function ProductCardBase({ product, priority = false }: ProductCardProps) {
         </p>
       </div>
       <div className="product-actions">
-        <button className="buy-button" type="button" onClick={() => add(product)}>
+        <Link className="buy-button" to="/$slug/p" params={{ slug: product.slug }}>
           Comprar
-        </button>
-        <button
-          aria-label={`Adicionar ${product.name} à cesta`}
+        </Link>
+        <Link
+          aria-label={`Ver detalhes de ${product.name}`}
           className="quick-add"
-          type="button"
-          onClick={() => add(product)}
+          to="/$slug/p"
+          params={{ slug: product.slug }}
         >
           + <img alt="" className="cart-icon-image" loading="lazy" src={CART_ICON} />
-        </button>
+        </Link>
       </div>
+
     </article>
   );
 }

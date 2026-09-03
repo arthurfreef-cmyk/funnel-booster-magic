@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 
 import { CardModal } from "@/components/CardModal";
 import { PixModal } from "@/components/PixModal";
+import { hasVisited } from "@/lib/product-visit";
 import { readAddress, saveAddress } from "@/lib/shipping-address";
 import { ORDER_BUMP } from "@/data/site";
 import { useCart } from "@/lib/cart";
@@ -59,8 +60,9 @@ type FieldErrors = { [K in keyof FormState]?: string | undefined };
 const RESERVE_SECONDS = 15 * 60;
 
 function CheckoutRoute() {
-  const { items, subtotal, shipping, add, clear, hydrated } = useCart();
+  const { items, subtotal, shipping, add, setQuantity, remove, clear, hydrated } = useCart();
   const navigate = useNavigate();
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [form, setForm] = useState<FormState>(EMPTY);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -74,6 +76,7 @@ function CheckoutRoute() {
   const formRef = useRef<HTMLFormElement>(null);
   const cepAbortRef = useRef<AbortController | null>(null);
   const bumpAdded = items.some((item) => item.slug === ORDER_BUMP.slug);
+
 
   // Reaproveita o CEP/endereço simulado no carrinho.
   useEffect(() => {
@@ -93,6 +96,13 @@ function CheckoutRoute() {
     );
     setCepFilled(true);
   }, []);
+
+  // Ninguém finaliza sem antes conhecer o produto: leva à PDP do primeiro item.
+  useEffect(() => {
+    if (!hydrated || items.length === 0) return;
+    const pending = items.find((item) => item.slug !== ORDER_BUMP.slug && !hasVisited(item.slug));
+    if (pending) void navigate({ to: "/$slug/p", params: { slug: pending.slug } });
+  }, [hydrated, items, navigate]);
 
   // Reserva do preço promocional (urgência real e visível).
   useEffect(() => {
@@ -231,9 +241,46 @@ function CheckoutRoute() {
     return true;
   };
 
+  /** Avança de etapa validando somente o que a etapa exige. */
+  const goTo = (next: 1 | 2 | 3 | 4) => {
+    setError(null);
+    setStep(next);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const nextFromStep = () => {
+    if (step === 1) {
+      if (items.length === 0) {
+        setError("Sua cesta está vazia.");
+        return;
+      }
+      trackInitiateCheckout(effectiveTotal, items);
+      goTo(2);
+      return;
+    }
+    if (step === 2) {
+      if (!validate()) return;
+      goTo(3);
+      return;
+    }
+    if (step === 3) {
+      goTo(4);
+    }
+  };
+
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!validate() || loading) return;
+    if (step !== 4) {
+      nextFromStep();
+      return;
+    }
+    if (loading) return;
+    if (!validate()) {
+      setStep(2);
+      return;
+    }
+
+
     if (method === "card") {
       setCardOpen(true);
       return;
@@ -319,6 +366,26 @@ function CheckoutRoute() {
         </p>
       </div>
 
+      <ol className="checkout-stepper">
+        {(["carrinho", "identificação", "pagamento", "confirmação"] as const).map((label, index) => {
+          const value = (index + 1) as 1 | 2 | 3 | 4;
+          const state = step === value ? "current" : step > value ? "done" : "todo";
+          return (
+            <li key={label} className={`step-${state}`}>
+              <button
+                disabled={state === "todo"}
+                type="button"
+                onClick={() => state === "done" && goTo(value)}
+              >
+                <em>{state === "done" ? "✓" : value}</em>
+                <span>{label}</span>
+              </button>
+            </li>
+          );
+        })}
+      </ol>
+
+
       {remaining > 0 && (
         <div className="checkout-reserve" role="status">
           <strong>preço promocional reservado</strong>
@@ -331,13 +398,67 @@ function CheckoutRoute() {
       <div className="checkout-layout">
         <div>
           <form className="checkout-form" ref={formRef} onSubmit={onSubmit}>
+            {step === 1 && (
             <section className="checkout-form-section">
               <div className="checkout-form-heading">
                 <span>1</span>
                 <div>
-                  <h3>dados pessoais</h3>
+                  <h3>sua cesta</h3>
+                  <p>Confira os itens antes de continuar.</p>
+                </div>
+              </div>
+              <ul className="step-cart">
+                {items.map((item) => (
+                  <li key={item.slug}>
+                    <img alt={item.name} loading="lazy" src={item.image} width={64} height={64} />
+                    <div>
+                      <p>{item.name}</p>
+                      <strong>{formatPrice(itemPrice(item) * item.quantity)}</strong>
+                    </div>
+                    <div className="step-cart-qty">
+                      <button
+                        aria-label="Diminuir"
+                        type="button"
+                        onClick={() => setQuantity(item.slug, item.quantity - 1)}
+                      >
+                        −
+                      </button>
+                      <span>{item.quantity}</span>
+                      <button
+                        aria-label="Aumentar"
+                        type="button"
+                        onClick={() => setQuantity(item.slug, item.quantity + 1)}
+                      >
+                        +
+                      </button>
+                    </div>
+                    <button className="step-cart-remove" type="button" onClick={() => remove(item.slug)}>
+                      remover
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              {error && <p className="form-error">{error}</p>}
+              <button className="checkout-button checkout-cta" type="submit">
+                continuar para identificação
+              </button>
+              <Link className="step-back" to="/">
+                continuar comprando
+              </Link>
+            </section>
+            )}
+
+            {step === 2 && (
+            <>
+            <section className="checkout-form-section">
+
+              <div className="checkout-form-heading">
+                <span>2</span>
+                <div>
+                  <h3>identificação</h3>
                   <p>Usamos seus dados apenas para emitir e entregar o pedido.</p>
                 </div>
+
               </div>
               <label>
                 <span>nome completo</span>
@@ -485,11 +606,23 @@ function CheckoutRoute() {
                   {err("state") && <em className="field-error">{err("state")}</em>}
                 </label>
               </div>
+              {error && <p className="form-error">{error}</p>}
+              <button className="checkout-button checkout-cta" type="submit">
+                continuar para pagamento
+              </button>
+              <button className="step-back" type="button" onClick={() => goTo(1)}>
+                voltar para a cesta
+              </button>
             </section>
 
+            </>
+            )}
+
+            {step === 3 && (
             <section className="checkout-form-section checkout-payment-section">
               <div className="checkout-form-heading">
                 <span>3</span>
+
                 <div>
                   <h3>pagamento</h3>
                   <p>O desconto promocional é válido somente no PIX.</p>
@@ -532,13 +665,11 @@ function CheckoutRoute() {
 
               {error && <p className="form-error">{error}</p>}
 
-              <button className="checkout-button checkout-cta" disabled={loading} type="submit">
-                {loading ? <Loader2 className="pix-spin" size={16} /> : <Lock aria-hidden size={16} />}
-                {loading
-                  ? "gerando pix…"
-                  : method === "pix"
-                    ? `pagar ${formatPrice(effectiveTotal)} com pix`
-                    : `pagar ${formatPrice(effectiveTotal)} com cartão`}
+              <button className="checkout-button checkout-cta" type="submit">
+                revisar pedido
+              </button>
+              <button className="step-back" type="button" onClick={() => goTo(2)}>
+                voltar para identificação
               </button>
 
               <ul className="checkout-assurances">
@@ -553,30 +684,108 @@ function CheckoutRoute() {
                 </li>
               </ul>
             </section>
+            )}
+
+            {step === 4 && (
+            <section className="checkout-form-section">
+              <div className="checkout-form-heading">
+                <span>4</span>
+                <div>
+                  <h3>confirmação</h3>
+                  <p>Revise os dados e finalize o pagamento.</p>
+                </div>
+              </div>
+
+              <div className="confirm-block">
+                <div>
+                  <strong>dados</strong>
+                  <span>{form.name}</span>
+                  <span>{form.email}</span>
+                  <span>
+                    {form.document} · {form.phone}
+                  </span>
+                  <button type="button" onClick={() => goTo(2)}>
+                    alterar
+                  </button>
+                </div>
+                <div>
+                  <strong>entrega</strong>
+                  <span>
+                    {form.street}, {form.number}
+                    {form.complement ? ` · ${form.complement}` : ""}
+                  </span>
+                  <span>
+                    {form.district} · {form.city}/{form.state} · {form.zip}
+                  </span>
+                  <button type="button" onClick={() => goTo(2)}>
+                    alterar
+                  </button>
+                </div>
+                <div>
+                  <strong>pagamento</strong>
+                  <span>{method === "pix" ? "PIX · aprovação imediata" : "cartão de crédito"}</span>
+                  <span>total {formatPrice(effectiveTotal)}</span>
+                  <button type="button" onClick={() => goTo(3)}>
+                    alterar
+                  </button>
+                </div>
+              </div>
+
+              {error && <p className="form-error">{error}</p>}
+
+              <button className="checkout-button checkout-cta" disabled={loading} type="submit">
+                {loading ? <Loader2 className="pix-spin" size={16} /> : <Lock aria-hidden size={16} />}
+                {loading
+                  ? "gerando pix…"
+                  : method === "pix"
+                    ? `pagar ${formatPrice(effectiveTotal)} com pix`
+                    : `pagar ${formatPrice(effectiveTotal)} com cartão`}
+              </button>
+              <button className="step-back" type="button" onClick={() => goTo(3)}>
+                voltar para pagamento
+              </button>
+
+              <ul className="checkout-assurances">
+                <li>
+                  <ShieldCheck aria-hidden size={16} /> pagamento processado com criptografia
+                </li>
+                <li>
+                  <Truck aria-hidden size={16} /> envio em até 24h após a confirmação
+                </li>
+                <li>
+                  <RefreshCcw aria-hidden size={16} /> 7 dias para troca ou devolução
+                </li>
+              </ul>
+            </section>
+            )}
           </form>
 
-          <section className="order-bump">
-            <div className="order-bump-heading">
-              <span>oferta única</span>
-              <strong>só nesta compra</strong>
-            </div>
-            <div className="order-bump-content">
-              <img alt={ORDER_BUMP.name} loading="lazy" src={ORDER_BUMP.image} />
-              <div>
-                <h3>{ORDER_BUMP.name}</h3>
-                <p>{ORDER_BUMP.description}</p>
-                <strong>{formatPrice(ORDER_BUMP.price)}</strong>
+
+          {step === 3 && (
+            <section className="order-bump">
+              <div className="order-bump-heading">
+                <span>oferta única</span>
+                <strong>só nesta compra</strong>
               </div>
-            </div>
-            <button
-              className={bumpAdded ? "added" : undefined}
-              disabled={bumpAdded}
-              type="button"
-              onClick={() => add(ORDER_BUMP)}
-            >
-              {bumpAdded ? "adicionado à cesta ✓" : "sim, quero adicionar"}
-            </button>
-          </section>
+              <div className="order-bump-content">
+                <img alt={ORDER_BUMP.name} loading="lazy" src={ORDER_BUMP.image} />
+                <div>
+                  <h3>{ORDER_BUMP.name}</h3>
+                  <p>{ORDER_BUMP.description}</p>
+                  <strong>{formatPrice(ORDER_BUMP.price)}</strong>
+                </div>
+              </div>
+              <button
+                className={bumpAdded ? "added" : undefined}
+                disabled={bumpAdded}
+                type="button"
+                onClick={() => add(ORDER_BUMP)}
+              >
+                {bumpAdded ? "adicionado à cesta ✓" : "sim, quero adicionar"}
+              </button>
+            </section>
+          )}
+
         </div>
 
         <aside className="order-summary">
@@ -634,8 +843,19 @@ function CheckoutRoute() {
         </div>
         <button className="checkout-button" disabled={loading} type="button" onClick={submitFromBar}>
           {loading ? <Loader2 className="pix-spin" size={16} /> : null}
-          {loading ? "gerando pix…" : method === "pix" ? "pagar com pix" : "pagar com cartão"}
+          {loading
+            ? "gerando pix…"
+            : step === 1
+              ? "continuar"
+              : step === 2
+                ? "ir para pagamento"
+                : step === 3
+                  ? "revisar pedido"
+                  : method === "pix"
+                    ? "pagar com pix"
+                    : "pagar com cartão"}
         </button>
+
       </div>
 
       {cardOpen && <CardModal amount={effectiveTotal} onClose={() => setCardOpen(false)} />}
