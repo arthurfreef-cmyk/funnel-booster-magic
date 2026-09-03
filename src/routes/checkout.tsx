@@ -328,7 +328,6 @@ function CheckoutRoute() {
     void navigate({ to: "/obrigado" });
   };
 
-  const submitFromBar = () => formRef.current?.requestSubmit();
 
   const err = (key: keyof FormState) => fieldErrors[key];
   const cls = (key: keyof FormState, autofilled = false) =>
@@ -352,7 +351,7 @@ function CheckoutRoute() {
   }
 
   return (
-    <div className="checkout-page has-sticky-bar">
+    <div className="checkout-page">
       <nav className="breadcrumbs">
         <Link to="/">home</Link>
         <span>/</span>
