@@ -24,7 +24,6 @@ const TRY_AGAIN_INDEX = 7;
 const MAX_SPINS = 2;
 const SEGMENT = 360 / PRIZES.length;
 const SPIN_MS = 2000;
-const OFFER_SECONDS = 10 * 60;
 
 const CX = 110;
 const CY = 110;
@@ -50,12 +49,6 @@ function slicePath(index: number): string {
   return `M ${CX} ${CY} L ${x1.toFixed(2)} ${y1.toFixed(2)} A ${R} ${R} 0 0 1 ${x2.toFixed(2)} ${y2.toFixed(2)} Z`;
 }
 
-function formatClock(totalSeconds: number): string {
-  const safe = Math.max(0, totalSeconds);
-  const minutes = Math.floor(safe / 60);
-  const seconds = safe % 60;
-  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-}
 
 /**
  * Roleta de presell exibida uma vez por visitante.
