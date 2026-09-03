@@ -569,78 +569,90 @@ function CheckoutRoute() {
                 />
                 {err("zip") && <em className="field-error">{err("zip")}</em>}
               </label>
+              {cepFilled ? (
+                <p className="cep-resolved">
+                  {[form.street, form.district].filter(Boolean).join(", ")}
+                  {form.street || form.district ? " · " : ""}
+                  {form.city}
+                  {form.state ? `/${form.state}` : ""}
+                </p>
+              ) : (
+                <>
+                  <label>
+                    <span>rua</span>
+                    <input
+                      autoComplete="address-line1"
+                      className={cls("street")}
+                      data-field="street"
+                      placeholder="Rua / avenida"
+                      value={form.street}
+                      onChange={update("street")}
+                    />
+                    {err("street") && <em className="field-error">{err("street")}</em>}
+                  </label>
+                  <div className="checkout-field-row city-state">
+                    <label>
+                      <span>cidade</span>
+                      <input
+                        autoComplete="address-level2"
+                        className={cls("city")}
+                        data-field="city"
+                        placeholder="Cidade"
+                        value={form.city}
+                        onChange={update("city")}
+                      />
+                      {err("city") && <em className="field-error">{err("city")}</em>}
+                    </label>
+                    <label>
+                      <span>UF</span>
+                      <input
+                        autoComplete="address-level1"
+                        className={cls("state")}
+                        data-field="state"
+                        maxLength={2}
+                        placeholder="UF"
+                        value={form.state}
+                        onChange={update("state")}
+                      />
+                      {err("state") && <em className="field-error">{err("state")}</em>}
+                    </label>
+                  </div>
+                </>
+              )}
               <label>
-                <span>rua</span>
+                <span>número</span>
                 <input
-                  autoComplete="address-line1"
-                  className={cls("street", true)}
-                  data-field="street"
-                  placeholder="Rua / avenida"
-                  value={form.street}
-                  onChange={update("street")}
+                  className={cls("number")}
+                  data-field="number"
+                  inputMode="numeric"
+                  placeholder="123"
+                  ref={numberRef}
+                  value={form.number}
+                  onChange={update("number")}
                 />
-                {err("street") && <em className="field-error">{err("street")}</em>}
+                {err("number") && <em className="field-error">{err("number")}</em>}
               </label>
-              <div className="checkout-field-row number-complement">
-                <label>
-                  <span>número</span>
-                  <input
-                    className={cls("number")}
-                    data-field="number"
-                    inputMode="numeric"
-                    placeholder="123"
-                    ref={numberRef}
-                    value={form.number}
-                    onChange={update("number")}
-                  />
-                  {err("number") && <em className="field-error">{err("number")}</em>}
-                </label>
-                <label>
-                  <span>complemento <small>(opcional)</small></span>
-                  <input placeholder="apto, bloco…" value={form.complement} onChange={update("complement")} />
-                </label>
-              </div>
-              <label>
-                <span>bairro</span>
-                <input
-                  autoComplete="address-level3"
-                  className={cls("district", true)}
-                  data-field="district"
-                  placeholder="Bairro"
-                  value={form.district}
-                  onChange={update("district")}
-                />
-              </label>
-              <div className="checkout-field-row city-state">
-                <label>
-                  <span>cidade</span>
-                  <input
-                    autoComplete="address-level2"
-                    className={cls("city", true)}
-                    data-field="city"
-                    placeholder="Cidade"
-                    value={form.city}
-                    onChange={update("city")}
-                  />
-                  {err("city") && <em className="field-error">{err("city")}</em>}
-                </label>
-                <label>
-                  <span>UF</span>
-                  <input
-                    autoComplete="address-level1"
-                    className={cls("state", true)}
-                    data-field="state"
-                    maxLength={2}
-                    placeholder="UF"
-                    value={form.state}
-                    onChange={update("state")}
-                  />
-                  {err("state") && <em className="field-error">{err("state")}</em>}
-                </label>
-              </div>
+
+              {cepFilled && (
+                <div className="order-summary inline-summary">
+                  <p>
+                    <span>Subtotal</span>
+                    <span>{formatPrice(effectiveSubtotal)}</span>
+                  </p>
+                  <p>
+                    <span>Frete</span>
+                    <span>{formatPrice(shipping)}</span>
+                  </p>
+                  <div>
+                    <span>Total</span>
+                    <strong>{formatPrice(effectiveTotal)}</strong>
+                  </div>
+                </div>
+              )}
+
               {error && <p className="form-error">{error}</p>}
               <button className="checkout-button checkout-cta" type="submit">
-                continuar para pagamento
+                <Lock aria-hidden size={16} /> comprar {formatPrice(effectiveSubtotal + (cepFilled ? shipping : 0))}
               </button>
               <button className="step-back" type="button" onClick={() => goTo(1)}>
                 voltar para a cesta
