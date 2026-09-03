@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 
 import { HeroSlider } from "@/components/HeroSlider";
 import { Shelf } from "@/components/Shelf";
@@ -130,15 +130,7 @@ function Home() {
 
       <Newsletter />
 
-      <section className="instagram-section">
-        <h2>@wepink</h2>
-        <iframe
-          className="instagram-frame"
-          loading="lazy"
-          src="https://www.instagram.com/wepink/embed"
-          title="Instagram wepink"
-        />
-      </section>
+      <InstagramEmbed />
     </>
   );
 }
