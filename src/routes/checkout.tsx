@@ -59,8 +59,9 @@ type FieldErrors = { [K in keyof FormState]?: string | undefined };
 const RESERVE_SECONDS = 15 * 60;
 
 function CheckoutRoute() {
-  const { items, subtotal, shipping, add, clear, hydrated } = useCart();
+  const { items, subtotal, shipping, add, setQuantity, remove, clear, hydrated } = useCart();
   const navigate = useNavigate();
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [form, setForm] = useState<FormState>(EMPTY);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -74,6 +75,7 @@ function CheckoutRoute() {
   const formRef = useRef<HTMLFormElement>(null);
   const cepAbortRef = useRef<AbortController | null>(null);
   const bumpAdded = items.some((item) => item.slug === ORDER_BUMP.slug);
+
 
   // Reaproveita o CEP/endereço simulado no carrinho.
   useEffect(() => {
