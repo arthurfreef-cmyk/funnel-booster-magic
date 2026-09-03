@@ -370,7 +370,60 @@ function CheckoutRoute() {
       <div className="checkout-layout">
         <div>
           <form className="checkout-form" ref={formRef} onSubmit={onSubmit}>
+            {step === 1 && (
             <section className="checkout-form-section">
+              <div className="checkout-form-heading">
+                <span>1</span>
+                <div>
+                  <h3>sua cesta</h3>
+                  <p>Confira os itens antes de continuar.</p>
+                </div>
+              </div>
+              <ul className="step-cart">
+                {items.map((item) => (
+                  <li key={item.slug}>
+                    <img alt={item.name} loading="lazy" src={item.image} width={64} height={64} />
+                    <div>
+                      <p>{item.name}</p>
+                      <strong>{formatPrice(itemPrice(item) * item.quantity)}</strong>
+                    </div>
+                    <div className="step-cart-qty">
+                      <button
+                        aria-label="Diminuir"
+                        type="button"
+                        onClick={() => setQuantity(item.slug, item.quantity - 1)}
+                      >
+                        −
+                      </button>
+                      <span>{item.quantity}</span>
+                      <button
+                        aria-label="Aumentar"
+                        type="button"
+                        onClick={() => setQuantity(item.slug, item.quantity + 1)}
+                      >
+                        +
+                      </button>
+                    </div>
+                    <button className="step-cart-remove" type="button" onClick={() => remove(item.slug)}>
+                      remover
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              {error && <p className="form-error">{error}</p>}
+              <button className="checkout-button checkout-cta" type="submit">
+                continuar para identificação
+              </button>
+              <Link className="step-back" to="/">
+                continuar comprando
+              </Link>
+            </section>
+            )}
+
+            {step === 2 && (
+            <>
+            <section className="checkout-form-section">
+
               <div className="checkout-form-heading">
                 <span>1</span>
                 <div>
