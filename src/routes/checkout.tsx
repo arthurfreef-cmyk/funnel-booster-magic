@@ -425,11 +425,12 @@ function CheckoutRoute() {
             <section className="checkout-form-section">
 
               <div className="checkout-form-heading">
-                <span>1</span>
+                <span>2</span>
                 <div>
-                  <h3>dados pessoais</h3>
+                  <h3>identificação</h3>
                   <p>Usamos seus dados apenas para emitir e entregar o pedido.</p>
                 </div>
+
               </div>
               <label>
                 <span>nome completo</span>
