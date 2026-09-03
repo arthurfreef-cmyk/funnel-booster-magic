@@ -116,14 +116,7 @@ export function PrizeWheel() {
     }
   }, []);
 
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !spinning) close();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open, spinning, close]);
+  // Sem saída: a roleta só fecha depois de girar e ganhar o desconto.
 
   const spin = () => {
     if (spinning || won) return;
@@ -191,12 +184,8 @@ export function PrizeWheel() {
       className="drawer-layer wheel-layer"
       role="dialog"
     >
-      <button aria-label="Fechar roleta" className="drawer-scrim" type="button" onClick={close} />
+      <div aria-hidden className="drawer-scrim" />
       <div className="wheel-modal">
-        <button aria-label="Fechar" className="wheel-close" type="button" onClick={close}>
-          ×
-        </button>
-
         <span className="wheel-trust">✓ promoção oficial wepink</span>
         <h2>
           {won ? "desconto liberado!" : tryAgain ? "quase! tente de novo" : "gire e garanta seu desconto"}

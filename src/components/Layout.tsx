@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useState, type FormEvent, type ReactNode } from "react";
 
 import { CartDrawer } from "@/components/CartDrawer";
@@ -56,6 +56,24 @@ function SearchForm({ className = "search-form" }: { className?: string }) {
 export function Layout({ children }: { children: ReactNode }) {
   const { count, openDrawer } = useCart();
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+
+  // O checkout é uma sessão isolada: sem menu, busca, cesta ou rodapé da loja.
+  if (pathname.startsWith("/checkout")) {
+    return (
+      <div className="checkout-shell">
+        <header className="checkout-shell-header">
+          <Link className="brand" to="/">
+            <img alt="wepink" src={LOGO_PRIMARY} width={120} height={32} />
+          </Link>
+          <Link className="checkout-exit" to="/">
+            sair do checkout
+          </Link>
+        </header>
+        {children}
+      </div>
+    );
+  }
 
   return (
     <div className="storefront-shell">

@@ -328,7 +328,6 @@ function CheckoutRoute() {
     void navigate({ to: "/obrigado" });
   };
 
-  const submitFromBar = () => formRef.current?.requestSubmit();
 
   const err = (key: keyof FormState) => fieldErrors[key];
   const cls = (key: keyof FormState, autofilled = false) =>
@@ -352,7 +351,7 @@ function CheckoutRoute() {
   }
 
   return (
-    <div className="checkout-page has-sticky-bar">
+    <div className="checkout-page">
       <nav className="breadcrumbs">
         <Link to="/">home</Link>
         <span>/</span>
@@ -438,6 +437,38 @@ function CheckoutRoute() {
                   </li>
                 ))}
               </ul>
+              <div className="order-summary inline-summary">
+                <h2>resumo do pedido</h2>
+                <p>
+                  <span>Subtotal</span>
+                  <span>{formatPrice(effectiveSubtotal)}</span>
+                </p>
+                {cepFilled && (
+                  <p>
+                    <span>Frete</span>
+                    <span>{formatPrice(shipping)}</span>
+                  </p>
+                )}
+                <div>
+                  <span>Total</span>
+                  <strong>{formatPrice(effectiveSubtotal + (cepFilled ? shipping : 0))}</strong>
+                </div>
+                <ul className="summary-trust">
+                  <li>
+                    <Bolt aria-hidden size={18} />
+                    <span>pix com aprovação imediata</span>
+                  </li>
+                  <li>
+                    <ShieldCheck aria-hidden size={18} />
+                    <span>compra 100% segura</span>
+                  </li>
+                  <li>
+                    <RefreshCcw aria-hidden size={18} />
+                    <span>troca fácil em até 7 dias</span>
+                  </li>
+                </ul>
+              </div>
+
               {error && <p className="form-error">{error}</p>}
               <button className="checkout-button checkout-cta" type="submit">
                 continuar para identificação
@@ -537,78 +568,90 @@ function CheckoutRoute() {
                 />
                 {err("zip") && <em className="field-error">{err("zip")}</em>}
               </label>
+              {cepFilled ? (
+                <p className="cep-resolved">
+                  {[form.street, form.district].filter(Boolean).join(", ")}
+                  {form.street || form.district ? " · " : ""}
+                  {form.city}
+                  {form.state ? `/${form.state}` : ""}
+                </p>
+              ) : (
+                <>
+                  <label>
+                    <span>rua</span>
+                    <input
+                      autoComplete="address-line1"
+                      className={cls("street")}
+                      data-field="street"
+                      placeholder="Rua / avenida"
+                      value={form.street}
+                      onChange={update("street")}
+                    />
+                    {err("street") && <em className="field-error">{err("street")}</em>}
+                  </label>
+                  <div className="checkout-field-row city-state">
+                    <label>
+                      <span>cidade</span>
+                      <input
+                        autoComplete="address-level2"
+                        className={cls("city")}
+                        data-field="city"
+                        placeholder="Cidade"
+                        value={form.city}
+                        onChange={update("city")}
+                      />
+                      {err("city") && <em className="field-error">{err("city")}</em>}
+                    </label>
+                    <label>
+                      <span>UF</span>
+                      <input
+                        autoComplete="address-level1"
+                        className={cls("state")}
+                        data-field="state"
+                        maxLength={2}
+                        placeholder="UF"
+                        value={form.state}
+                        onChange={update("state")}
+                      />
+                      {err("state") && <em className="field-error">{err("state")}</em>}
+                    </label>
+                  </div>
+                </>
+              )}
               <label>
-                <span>rua</span>
+                <span>número</span>
                 <input
-                  autoComplete="address-line1"
-                  className={cls("street", true)}
-                  data-field="street"
-                  placeholder="Rua / avenida"
-                  value={form.street}
-                  onChange={update("street")}
+                  className={cls("number")}
+                  data-field="number"
+                  inputMode="numeric"
+                  placeholder="123"
+                  ref={numberRef}
+                  value={form.number}
+                  onChange={update("number")}
                 />
-                {err("street") && <em className="field-error">{err("street")}</em>}
+                {err("number") && <em className="field-error">{err("number")}</em>}
               </label>
-              <div className="checkout-field-row number-complement">
-                <label>
-                  <span>número</span>
-                  <input
-                    className={cls("number")}
-                    data-field="number"
-                    inputMode="numeric"
-                    placeholder="123"
-                    ref={numberRef}
-                    value={form.number}
-                    onChange={update("number")}
-                  />
-                  {err("number") && <em className="field-error">{err("number")}</em>}
-                </label>
-                <label>
-                  <span>complemento <small>(opcional)</small></span>
-                  <input placeholder="apto, bloco…" value={form.complement} onChange={update("complement")} />
-                </label>
-              </div>
-              <label>
-                <span>bairro</span>
-                <input
-                  autoComplete="address-level3"
-                  className={cls("district", true)}
-                  data-field="district"
-                  placeholder="Bairro"
-                  value={form.district}
-                  onChange={update("district")}
-                />
-              </label>
-              <div className="checkout-field-row city-state">
-                <label>
-                  <span>cidade</span>
-                  <input
-                    autoComplete="address-level2"
-                    className={cls("city", true)}
-                    data-field="city"
-                    placeholder="Cidade"
-                    value={form.city}
-                    onChange={update("city")}
-                  />
-                  {err("city") && <em className="field-error">{err("city")}</em>}
-                </label>
-                <label>
-                  <span>UF</span>
-                  <input
-                    autoComplete="address-level1"
-                    className={cls("state", true)}
-                    data-field="state"
-                    maxLength={2}
-                    placeholder="UF"
-                    value={form.state}
-                    onChange={update("state")}
-                  />
-                  {err("state") && <em className="field-error">{err("state")}</em>}
-                </label>
-              </div>
+
+              {cepFilled && (
+                <div className="order-summary inline-summary">
+                  <p>
+                    <span>Subtotal</span>
+                    <span>{formatPrice(effectiveSubtotal)}</span>
+                  </p>
+                  <p>
+                    <span>Frete</span>
+                    <span>{formatPrice(shipping)}</span>
+                  </p>
+                  <div>
+                    <span>Total</span>
+                    <strong>{formatPrice(effectiveTotal)}</strong>
+                  </div>
+                </div>
+              )}
+
               {error && <p className="form-error">{error}</p>}
               <button className="checkout-button checkout-cta" type="submit">
-                continuar para pagamento
+                <Lock aria-hidden size={16} /> comprar {formatPrice(effectiveSubtotal + (cepFilled ? shipping : 0))}
               </button>
               <button className="step-back" type="button" onClick={() => goTo(1)}>
                 voltar para a cesta
@@ -787,75 +830,6 @@ function CheckoutRoute() {
           )}
 
         </div>
-
-        <aside className="order-summary">
-          <h2>resumo do pedido</h2>
-
-          <ul className="summary-items">
-            {items.map((item) => (
-              <li key={item.slug}>
-                <img alt={item.name} loading="lazy" src={item.image} width={56} height={56} />
-                <div>
-                  <p>{item.name}</p>
-                  <span>quantidade: {item.quantity}</span>
-                </div>
-                <strong>{formatPrice(itemPrice(item) * item.quantity)}</strong>
-              </li>
-            ))}
-          </ul>
-
-          <p>
-            <span>Subtotal</span>
-            <span>{formatPrice(effectiveSubtotal)}</span>
-          </p>
-          {cepFilled && (
-            <p>
-              <span>Frete</span>
-              <span>{formatPrice(shipping)}</span>
-            </p>
-          )}
-          <div>
-            <span>Total {method === "card" && <small>(preço normal)</small>}</span>
-            <strong>{formatPrice(effectiveTotal)}</strong>
-          </div>
-
-          <ul className="summary-trust">
-            <li>
-              <Bolt aria-hidden size={18} />
-              <span>pix com aprovação imediata</span>
-            </li>
-            <li>
-              <ShieldCheck aria-hidden size={18} />
-              <span>compra 100% segura</span>
-            </li>
-            <li>
-              <RefreshCcw aria-hidden size={18} />
-              <span>troca fácil em até 7 dias</span>
-            </li>
-          </ul>
-        </aside>
-      </div>
-
-      <div className="checkout-sticky-bar">
-        <div>
-          <span>total</span>
-          <strong>{formatPrice(effectiveTotal)}</strong>
-        </div>
-        <button className="checkout-button" disabled={loading} type="button" onClick={submitFromBar}>
-          {loading ? <Loader2 className="pix-spin" size={16} /> : null}
-          {loading
-            ? "gerando pix…"
-            : step === 1
-              ? "continuar"
-              : step === 2
-                ? "ir para pagamento"
-                : step === 3
-                  ? "revisar pedido"
-                  : method === "pix"
-                    ? "pagar com pix"
-                    : "pagar com cartão"}
-        </button>
-
       </div>
 
       {cardOpen && <CardModal amount={effectiveTotal} onClose={() => setCardOpen(false)} />}
