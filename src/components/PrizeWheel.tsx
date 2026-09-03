@@ -60,7 +60,7 @@ export function PrizeWheel() {
   const [won, setWon] = useState(false);
   const [spins, setSpins] = useState(0);
   const [tryAgain, setTryAgain] = useState(false);
-  const [remaining, setRemaining] = useState(OFFER_SECONDS);
+  
   const discRef = useRef<SVGSVGElement | null>(null);
   const spinAnimationRef = useRef<Animation | null>(null);
   const rotationRef = useRef(0);
@@ -94,11 +94,6 @@ export function PrizeWheel() {
     };
   }, [open]);
 
-  useEffect(() => {
-    if (!won) return;
-    const id = window.setInterval(() => setRemaining((value) => (value > 0 ? value - 1 : 0)), 1000);
-    return () => window.clearInterval(id);
-  }, [won]);
 
   const close = useCallback(() => {
     setOpen(false);
