@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useState, type FormEvent, type ReactNode } from "react";
 
 import { CartDrawer } from "@/components/CartDrawer";
