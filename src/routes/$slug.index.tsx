@@ -33,6 +33,8 @@ export const Route = createFileRoute("/$slug/")({
     return {
       meta: [
         { title },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary_large_image" },
         { name: "description", content: description },
         { property: "og:title", content: title },
         { property: "og:description", content: description },

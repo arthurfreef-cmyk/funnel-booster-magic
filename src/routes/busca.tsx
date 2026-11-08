@@ -12,6 +12,8 @@ export const Route = createFileRoute("/busca")({
   }),
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Busca | wepink" },
       { name: "description", content: "Encontre perfumes, body splash, skincare e kits wepink." },
       { property: "og:title", content: "Busca | wepink" },
