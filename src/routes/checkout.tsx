@@ -16,6 +16,8 @@ import { trackInitiateCheckout, trackPurchase } from "@/lib/pixels";
 export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Checkout seguro | wepink" },
       { name: "description", content: "Finalize seu pedido wepink em poucos passos, com pagamento PIX aprovado na hora." },
       { property: "og:title", content: "Checkout seguro | wepink" },

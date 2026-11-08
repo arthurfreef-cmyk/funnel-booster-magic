@@ -1,7 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
-const API_BASE = "https://api.realtechdev.com.br";
+import { toVelaniCents, velaniPaymentStatus, velaniTransactionSchema } from "./velani";
+
+const GATEWAY_URL = "https://connector-gateway.lovable.dev/udc_velani_pagamentos/api/v1/api-gateway/v1/transactions";
 
 const payloadSchema = z.object({
   amount: z.number().positive(),
@@ -41,135 +43,79 @@ export interface PixResult {
   amount: number;
 }
 
-const cents = (value: number) => Math.round(value * 100);
-const digits = (value: string) => value.replace(/\D/g, "");
-
-function credentials() {
-  const token = process.env["BUCKPAY_TOKEN"];
-  const userAgent = process.env["BUCKPAY_USER_AGENT"];
-  if (!token || !userAgent) {
-    throw new Error("Pagamento indisponível: credenciais da BuckPay não configuradas.");
+async function requestVelani(path: string, body?: unknown): Promise<unknown> {
+  const appKey = process.env["LOVABLE_API_KEY"];
+  const connectionKey = process.env["UDC_VELANI_PAGAMENTOS_API_KEY"];
+  if (!appKey || !connectionKey) {
+    throw new Error("Pagamento indisponível: conexão Velani não configurada.");
   }
-  return {
-    Authorization: `Bearer ${token}`,
-    "User-Agent": userAgent,
-    "Content-Type": "application/json",
-  };
+  const response = await fetch(`${GATEWAY_URL}${path}`, {
+    method: body ? "POST" : "GET",
+    headers: {
+      Authorization: `Bearer ${appKey}`,
+      "X-Connection-Api-Key": connectionKey,
+      "Content-Type": "application/json",
+    },
+    body: body ? JSON.stringify(body) : undefined,
+    signal: AbortSignal.timeout(30000),
+  });
+  const text = await response.text();
+  if (!response.ok) {
+    console.error(`Velani request failed [${response.status}]: ${text}`);
+    throw new Error(`Não foi possível processar o PIX (${response.status}). Tente novamente.`);
+  }
+  try {
+    return JSON.parse(text) as unknown;
+  } catch {
+    throw new Error("Resposta inesperada da Velani. Tente novamente.");
+  }
 }
 
-/** Procura o código PIX copia e cola nos formatos conhecidos da resposta. */
-function extractPixCode(json: unknown): string | null {
-  const seen = new Set<unknown>();
-  const walk = (node: unknown): string | null => {
-    if (!node || typeof node !== "object" || seen.has(node)) return null;
-    seen.add(node);
-    for (const [key, value] of Object.entries(node as Record<string, unknown>)) {
-      if (typeof value === "string" && value.length > 20) {
-        const k = key.toLowerCase();
-        if (k.includes("copy") || k.includes("emv") || k === "code" || k === "qrcode" || k === "qr_code") {
-          return value;
-        }
-      }
-    }
-    for (const value of Object.values(node as Record<string, unknown>)) {
-      const found = walk(value);
-      if (found) return found;
-    }
-    return null;
-  };
-  return walk(json);
-}
-
-/** Cria uma transação PIX na BuckPay e devolve o código copia e cola. */
+/** Keep the existing checkout contract; Velani receives monetary values in cents. */
 export const createPixPayment = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => payloadSchema.parse(data))
   .handler(async ({ data }): Promise<PixResult> => {
-    const externalId = `wepink_${Date.now()}`;
-
-    const body = {
-      external_id: externalId,
-      payment_method: "pix",
-      amount: cents(data.amount),
-      buyer: {
+    const json = await requestVelani("", {
+      paymentMethod: "pix",
+      amount: toVelaniCents(data.amount),
+      customer: {
         name: data.payer.name.trim(),
         email: data.payer.email.trim(),
-        document: digits(data.payer.taxId),
-        // BuckPay exige DDI: 55 + DDD + número (mínimo 12 dígitos).
-        phone: (() => {
-          const phone = digits(data.payer.phone);
-          return phone.startsWith("55") && phone.length >= 12 ? phone : `55${phone}`;
-        })(),
+        phone: data.payer.phone.replace(/\D/g, ""),
+        document: { type: "cpf", number: data.payer.taxId.replace(/\D/g, "") },
       },
-      description: `Pedido wepink - ${data.items.length} item(ns)`,
       items: data.items.map((item) => ({
-        name: item.name,
-        price: cents(item.price),
+        title: item.name,
+        unitPrice: toVelaniCents(item.price),
         quantity: item.quantity,
       })),
-      shipping: {
-        price: cents(data.shipping),
-        address: {
-          zip_code: digits(data.address.zipCode),
-          street: data.address.street,
-          number: data.address.number,
-          complement: data.address.complement?.trim() || undefined,
-          neighborhood: data.address.district,
-          city: data.address.city,
-          state: data.address.state.toUpperCase().slice(0, 2),
-          country: "BR",
-        },
-      },
-    };
-
-    const response = await fetch(`${API_BASE}/v1/transactions`, {
-      method: "POST",
-      headers: credentials(),
-      body: JSON.stringify(body),
+      externalId: `wepink_${crypto.randomUUID()}`,
+      description: `Pedido wepink - ${data.items.length} item(ns)`,
     });
-
-    const text = await response.text();
-    if (!response.ok) {
-      console.error(`BuckPay transaction failed [${response.status}]: ${text}`);
-      throw new Error(`Não foi possível gerar o PIX (${response.status}). Tente novamente.`);
+    const parsed = velaniTransactionSchema.safeParse(json);
+    if (!parsed.success || !parsed.data.data.pixQrCode) {
+      throw new Error("A Velani não retornou uma cobrança PIX válida. Tente novamente.");
     }
-
-    let json: unknown;
-    try {
-      json = JSON.parse(text);
-    } catch {
-      console.error(`BuckPay response is not JSON: ${text}`);
-      throw new Error("Resposta inesperada do gateway. Tente novamente.");
+    const transaction = parsed.data.data;
+    if (transaction.amount !== toVelaniCents(data.amount)) {
+      throw new Error("O valor do PIX difere do pedido. Tente novamente.");
     }
-
-    const root = (json as { data?: Record<string, unknown> }).data ?? (json as Record<string, unknown>);
-    const copypaste = extractPixCode(json);
-    if (!copypaste) {
-      console.error(`BuckPay response without pix code: ${text}`);
-      throw new Error("O gateway não retornou o código PIX. Tente novamente.");
-    }
-
     return {
-      id: String(root["id"] ?? externalId),
-      status: String(root["status"] ?? "pending"),
-      copypaste,
-      amount: cents(data.amount),
+      id: transaction.id,
+      status: transaction.status,
+      copypaste: parsed.data.data.pixQrCode,
+      amount: transaction.amount,
     };
   });
 
-/** Consulta o status da transação (usado só para confirmar manualmente na tela de PIX). */
+/** Return only status, never the customer's details from the provider response. */
 export const getPixStatus = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => z.object({ id: z.string().min(1) }).parse(data))
+  .inputValidator((data: unknown) => z.object({ id: z.string().uuid() }).parse(data))
   .handler(async ({ data }): Promise<{ status: string }> => {
-    const response = await fetch(`${API_BASE}/v1/transactions/external_id/${data.id}`, {
-      headers: credentials(),
-    });
-    const text = await response.text();
-    if (!response.ok) {
-      console.error(`BuckPay status failed [${response.status}]: ${text}`);
-      throw new Error(`Não foi possível consultar o pagamento (${response.status}).`);
+    const json = await requestVelani(`/${encodeURIComponent(data.id)}`);
+    const parsed = velaniTransactionSchema.safeParse(json);
+    if (!parsed.success || parsed.data.data.id !== data.id) {
+      throw new Error("Não foi possível verificar o pagamento na Velani.");
     }
-    const json = JSON.parse(text) as { data?: { status?: string }; status?: string };
-    const status = json.data?.status ?? json.status ?? "pending";
-    const paid = ["paid", "approved", "processed", "completed"].includes(status.toLowerCase());
-    return { status: paid ? "PAID" : "PENDING" };
+    return { status: velaniPaymentStatus(parsed.data.data.status) };
   });
