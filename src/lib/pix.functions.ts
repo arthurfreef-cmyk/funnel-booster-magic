@@ -56,7 +56,7 @@ async function requestVelani(path: string, body?: unknown): Promise<unknown> {
       "X-Connection-Api-Key": connectionKey,
       "Content-Type": "application/json",
     },
-    body: body ? JSON.stringify(body) : undefined,
+    ...(body ? { body: JSON.stringify(body) } : {}),
     signal: AbortSignal.timeout(30000),
   });
   const text = await response.text();
