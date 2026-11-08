@@ -10,3 +10,5 @@
 - [x] Checkout em 4 etapas (carrinho, identificação, pagamento, confirmação)
 - [x] Botão "Comprar" leva à página do produto (sem abrir carrinho)
 - [x] Checkout exige visita à página do produto antes de finalizar
+
+- [ ] Substituir o pagamento PIX por Velani e verificar geração e consulta no checkout
