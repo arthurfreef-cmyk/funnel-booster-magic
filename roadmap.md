@@ -11,4 +11,5 @@
 - [x] Botão "Comprar" leva à página do produto (sem abrir carrinho)
 - [x] Checkout exige visita à página do produto antes de finalizar
 
-- [ ] Substituir o pagamento PIX por Velani e verificar geração e consulta no checkout
+- [x] Substituir o pagamento PIX por Velani, conectar credenciais e testar conversão de valores
+- [ ] Validar geração e consulta no checkout — bloqueado: Velani responde HTTP 400 "Erro ao gerar pagamento PIX" mesmo com Secret Key; nenhum QR Code foi emitido
