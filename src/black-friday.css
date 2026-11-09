@@ -628,3 +628,15 @@
  .video-review-content h3{font-size:14px}
  .video-review-content p{font-size:11px}
 }
+
+
+/* Botão de retorno para a home em todas as páginas de produto. */
+.product-home-button{
+ display:inline-flex;align-items:center;gap:9px;width:max-content;margin:18px 0 8px;
+ padding:10px 15px;border:1px solid #edc5d7;border-radius:999px;
+ background:#fff;color:#c91b64;font-size:12px;font-weight:800;
+ text-decoration:none;transition:background .18s ease,border-color .18s ease,transform .18s ease
+}
+.product-home-button:hover{background:#fff3f8;border-color:#d81e6c;transform:translateX(-2px)}
+.product-home-button>span{font-size:17px;line-height:1}
+@media(max-width:600px){.product-home-button{margin:12px 14px 7px;padding:9px 13px;font-size:11px}}
