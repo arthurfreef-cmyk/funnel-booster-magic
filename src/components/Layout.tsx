@@ -131,7 +131,7 @@ export function Layout({ children }: { children: ReactNode }) {
               type="button"
               onClick={openDrawer}
             >
-              <img alt="" className="cart-icon-image" src={CART_ICON} />
+              <SafeImage alt="" className="cart-icon-image" src={CART_ICON} />
               {count > 0 && <span className="cart-count">{count}</span>}
             </button>
           </div>
@@ -184,17 +184,17 @@ export function Layout({ children }: { children: ReactNode }) {
         <div className="footer-main">
           <div className="footer-brand">
             <a href="#top">
-              <img alt="wepink" src={LOGO_SECONDARY} width={150} height={40} loading="lazy" />
+              <SafeImage alt="wepink" src={LOGO_SECONDARY} width={150} height={40} loading="lazy" />
             </a>
             <div className="social-links">
               <a aria-label="Instagram" href="https://www.instagram.com/wepink/" rel="noreferrer noopener" target="_blank">
-                <img alt="" src={SOCIAL_ICONS.instagram} loading="lazy" width={42} height={42} />
+                <SafeImage alt="" src={SOCIAL_ICONS.instagram} loading="lazy" width={42} height={42} />
               </a>
               <a aria-label="Facebook" href="https://www.facebook.com/wepinkoficial" rel="noreferrer noopener" target="_blank">
-                <img alt="" src={SOCIAL_ICONS.facebook} loading="lazy" width={42} height={42} />
+                <SafeImage alt="" src={SOCIAL_ICONS.facebook} loading="lazy" width={42} height={42} />
               </a>
               <a aria-label="YouTube" href="https://www.youtube.com/@wepink" rel="noreferrer noopener" target="_blank">
-                <img alt="" src={SOCIAL_ICONS.youtube} loading="lazy" width={42} height={42} />
+                <SafeImage alt="" src={SOCIAL_ICONS.youtube} loading="lazy" width={42} height={42} />
               </a>
             </div>
           </div>
@@ -216,7 +216,7 @@ export function Layout({ children }: { children: ReactNode }) {
             <h3>formas de pagamento</h3>
             <div className="payment-icons">
               {PAYMENT_ICONS.map((icon) => (
-                <img alt="" key={icon} loading="lazy" src={icon} width={48} height={36} />
+                <SafeImage alt="" key={icon} loading="lazy" src={icon} width={48} height={36} />
               ))}
             </div>
           </div>
