@@ -70,7 +70,7 @@ export function PixModal({ payment, amount, onClose, onPaid }: Props) {
           <b />
           <span className="complete"><i>✓</i> identificação</span>
           <b />
-          <span className="complete"><i>✓</i> pagamento</span>
+          <span className="current"><i>3</i> pagamento</span>
           <b />
           <span><i>4</i> confirmação</span>
         </nav>
