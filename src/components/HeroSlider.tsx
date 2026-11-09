@@ -20,27 +20,29 @@ export function HeroSlider() {
 
   return (
     <section aria-label="Destaques" className="hero">
-      <Link to="/$slug" params={{ slug: slide.href.replace(/^\/|\/p$/g, "") }}>
-        <picture>
-          <source media="(max-width: 720px)" srcSet={slide.mobile} />
-          <img
-            alt={slide.alt}
-            src={slide.desktop}
-            width={2000}
-            height={651}
-            fetchPriority="high"
-            decoding="async"
-          />
-        </picture>
-        {index === 0 && (
-          <div className="hero-black-friday-copy" aria-hidden="true">
-            <span>BLACK FRIDAY WEPINK</span>
-            <strong>seu momento mais rosa começa aqui</strong>
-            <small>descubra os kits e ofertas especiais</small>
-            <em>explorar ofertas <b>↗</b></em>
-          </div>
-        )}
-      </Link>
+      { "campaign" in slide && slide.campaign ? (
+        <Link className="hero-black-friday-banner" to="/$slug" params={{ slug: "kits" }}>
+          <span className="hero-bf-kicker">BLACK FRIDAY WEPINK</span>
+          <strong>ofertas que você estava esperando.</strong>
+          <span className="hero-bf-subtitle">seus favoritos com condições especiais por tempo limitado</span>
+          <span className="hero-bf-cta">ver ofertas <b>↗</b></span>
+          <span className="hero-bf-decoration" aria-hidden="true">W</span>
+        </Link>
+      ) : (
+        <Link to="/$slug" params={{ slug: slide.href.replace(/^\\/|\\/p$/g, "") }}>
+          <picture>
+            <source media="(max-width: 720px)" srcSet={slide.mobile} />
+            <img
+              alt={slide.alt}
+              src={slide.desktop}
+              width={2000}
+              height={651}
+              fetchPriority={index === 0 ? "high" : "auto"}
+              decoding="async"
+            />
+          </picture>
+        </Link>
+      )}
       <button
         aria-label="Anterior"
         className="slider-arrow previous"
