@@ -343,3 +343,187 @@
   outline:3px solid #ec2d7f45;
   outline-offset:2px;
 }
+
+
+/* Home: avaliações reais e newsletter mais compacta, sem iframe vazio do Instagram. */
+.newsletter-section{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:54px 24px 48px;
+  border:0;
+  background:linear-gradient(120deg,#fce5ef 0%,#fff5f9 52%,#f9d7e6 100%);
+  color:#171217;
+  text-align:center;
+}
+.newsletter-eyebrow{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:12px;
+  padding:6px 11px;
+  border:1px solid #f0b4ce;
+  border-radius:999px;
+  color:#c51d65;
+  background:#fff;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+.newsletter-section h2{
+  max-width:650px;
+  margin:0 auto 12px;
+  color:#171217;
+  font-size:clamp(25px,3.2vw,36px);
+  font-weight:800;
+  line-height:1.12;
+  letter-spacing:-.045em;
+  text-transform:lowercase;
+}
+.newsletter-section h2:after{content:none}
+.newsletter-subtitle{
+  max-width:540px;
+  margin:0 auto 25px;
+  color:#6f5963;
+  font-size:14px;
+  line-height:1.6;
+}
+.newsletter-section form{
+  display:grid;
+  grid-template-columns:1fr 1.2fr 1.1fr auto;
+  align-items:center;
+  gap:10px;
+  width:min(100%,1000px);
+  margin:0 auto;
+}
+.newsletter-section form input{
+  min-width:0;
+  height:48px;
+  padding:0 15px;
+  border:1px solid #ead2dd;
+  border-radius:8px;
+  background:#fff;
+  color:#171217;
+  font-size:13px;
+  outline:none;
+}
+.newsletter-section form input::placeholder{color:#9a8790}
+.newsletter-section form input:focus{
+  border-color:#ec2d7f;
+  box-shadow:0 0 0 3px #ec2d7f20;
+}
+.newsletter-section form button{
+  min-height:48px;
+  padding:0 22px;
+  border:1px solid #101010;
+  border-radius:8px;
+  background:#101010;
+  color:#fff;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.03em;
+  white-space:nowrap;
+  transition:background .18s,transform .18s;
+}
+.newsletter-section form button:hover{background:#d81e6c;transform:translateY(-1px)}
+.newsletter-section .form-error,.newsletter-section .form-success{
+  margin:13px 0 0;
+  font-size:12px;
+}
+.newsletter-section .form-success{color:#286a48}
+.reviews-section{
+  padding:62px 24px 58px;
+  background:#fff;
+  color:#171217;
+  text-align:center;
+}
+.reviews-heading>span{
+  color:#d81e6c;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+}
+.reviews-heading h2{
+  margin:10px auto 9px;
+  color:#171217;
+  font-size:clamp(25px,3vw,34px);
+  font-weight:800;
+  letter-spacing:-.045em;
+  line-height:1.15;
+}
+.reviews-heading p{margin:0 auto;color:#777;font-size:13px;line-height:1.6}
+.reviews-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px;
+  width:min(100%,1100px);
+  margin:30px auto 22px;
+  text-align:left;
+}
+.review-card{
+  display:flex;
+  min-height:205px;
+  flex-direction:column;
+  align-items:flex-start;
+  padding:22px;
+  border:1px solid #f0e3e9;
+  border-radius:13px;
+  background:#fff;
+  box-shadow:0 6px 22px #24101a08;
+}
+.review-stars{color:#ec2d7f;font-size:17px;letter-spacing:3px}
+.review-quote{
+  flex:1;
+  margin:15px 0 18px;
+  color:#30252b;
+  font-size:15px;
+  font-weight:600;
+  line-height:1.55;
+}
+.review-author{display:flex;align-items:center;gap:9px;margin-bottom:11px}
+.review-author strong{font-size:12px;color:#242024}
+.review-author span{
+  padding:4px 7px;
+  border-radius:999px;
+  background:#f4f4f4;
+  color:#777;
+  font-size:9px;
+  font-weight:700;
+  text-transform:uppercase;
+}
+.review-card>a{color:#d81e6c;font-size:11px;font-weight:800;text-decoration:none}
+.review-card>a:hover,.reviews-more:hover{text-decoration:underline}
+.reviews-more{
+  display:inline-flex;
+  min-height:42px;
+  align-items:center;
+  justify-content:center;
+  padding:0 17px;
+  border:1px solid #ec2d7f;
+  border-radius:8px;
+  color:#d81e6c;
+  font-size:11px;
+  font-weight:800;
+  text-decoration:none;
+}
+.reviews-disclaimer{margin:13px auto 0;color:#999;font-size:10px;line-height:1.5}
+@media(max-width:850px){
+  .newsletter-section form{grid-template-columns:1fr 1fr}
+  .newsletter-section form button{grid-column:1/-1}
+  .reviews-grid{gap:12px}
+  .review-card{padding:17px}
+}
+@media(max-width:600px){
+  .newsletter-section{padding:38px 18px 40px}
+  .newsletter-section h2{max-width:360px;font-size:25px}
+  .newsletter-subtitle{margin-bottom:20px;font-size:13px}
+  .newsletter-section form{grid-template-columns:1fr;gap:9px}
+  .newsletter-section form button{grid-column:auto;width:100%}
+  .reviews-section{padding:42px 16px 44px}
+  .reviews-grid{grid-template-columns:1fr;margin:23px auto 18px}
+  .review-card{min-height:0;padding:19px}
+  .review-quote{margin:12px 0 14px}
+}
