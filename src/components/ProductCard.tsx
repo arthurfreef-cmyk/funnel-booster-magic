@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { memo } from "react";
 
+import { SafeImage } from "@/components/SafeImage";
 import { BADGE_BEST_SELLER, BADGE_LANCAMENTO, CART_ICON, type Product } from "@/data/site";
 import { discountPercent, formatPrice, installment } from "@/lib/format";
 
@@ -23,7 +24,7 @@ function ProductCardBase({ product, priority = false }: ProductCardProps) {
   return (
     <article className="product-card">
       <Link className="product-image-link" to="/$slug/p" params={{ slug: product.slug }}>
-        <img
+        <SafeImage
           alt={product.name}
           className="product-image"
           decoding="async"
@@ -39,7 +40,7 @@ function ProductCardBase({ product, priority = false }: ProductCardProps) {
             <small>OFF</small>
           </span>
         )}
-        {badge && <img alt={badge.alt} className="product-badge" loading="lazy" src={badge.src} />}
+        {badge && <SafeImage alt={badge.alt} className="product-badge" loading="lazy" src={badge.src} />}
       </Link>
       <div className="product-copy">
         <Link to="/$slug/p" params={{ slug: product.slug }}>
@@ -61,7 +62,7 @@ function ProductCardBase({ product, priority = false }: ProductCardProps) {
           to="/$slug/p"
           params={{ slug: product.slug }}
         >
-          + <img alt="" className="cart-icon-image" loading="lazy" src={CART_ICON} />
+          + <SafeImage alt="" className="cart-icon-image" loading="lazy" src={CART_ICON} />
         </Link>
       </div>
 
