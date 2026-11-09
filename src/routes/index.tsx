@@ -99,43 +99,61 @@ function Newsletter() {
 }
 
 function CustomerReviews() {
+  const videos = [
+    {
+      id: "RuFnJATBkjQ",
+      title: "Resenha Body Splash Obsessed",
+      creator: "Stephanie Feitosa",
+      product: "Body Splash Obsessed",
+      description: "Teste de aroma, fixação e impressões de uso. O vídeo aborda o Obsessed a partir de 2min53s.",
+    },
+    {
+      id: "HbCFJfRUyMY",
+      title: "Avaliando body splashes da Wepink",
+      creator: "Jessica Morais",
+      product: "Linha Body Splash",
+      description: "Opinião e avaliação em vídeo de diferentes fragrâncias da marca.",
+    },
+    {
+      id: "NCocwAA-yWI",
+      title: "Testando o VF Golden",
+      creator: "Thaís Verônica",
+      product: "VF Golden",
+      description: "Impressões em vídeo sobre a fragrância VF Golden.",
+    },
+  ];
+
   return (
-    <section className="reviews-section" aria-labelledby="reviews-title">
+    <section className="reviews-section video-reviews-section" aria-labelledby="reviews-title">
       <div className="reviews-heading">
-        <span>opiniões reais de clientes</span>
-        <h2 id="reviews-title">quem experimenta, conta</h2>
-        <p>Veja o que clientes disseram sobre produtos específicos da Wepink.</p>
+        <span>resenhas em vídeo</span>
+        <h2 id="reviews-title">veja antes de escolher</h2>
+        <p>Experiências e opiniões publicadas por criadores independentes sobre produtos Wepink.</p>
       </div>
-      <div className="reviews-grid">
-        <article className="review-card review-card-with-image">
-          <img src="https://wepink.vtexassets.com/arquivos/ids/162339/161013-1200-auto.webp?v=638986082590870000" alt="Body Splash Obsessed Deluxe" loading="lazy" />
-          <div className="review-card-content">
-            <div className="review-stars" aria-label="5 de 5 estrelas">★★★★★</div>
-            <p className="review-quote">“Qualidade incrível por um bom preço. Delicioso o aroma!!!! E o fixador muito bom!”</p>
-            <div className="review-author"><strong>Mônica R.</strong><span>compra verificada</span></div>
-            <a href="https://www.wepink.com.br/desod-body-splash-obsessed-deluxe-200-ml---wepink-105/p?pp=1" target="_blank" rel="noreferrer noopener">Body Splash Obsessed Deluxe · ver avaliação ↗</a>
-          </div>
-        </article>
-        <article className="review-card review-card-with-image">
-          <img src="https://wepink.vtexassets.com/arquivos/ids/162328/160983-1200-auto.webp?v=638986077374730000" alt="Obsessed Gold Wepink" loading="lazy" />
-          <div className="review-card-content">
-            <div className="review-stars" aria-label="5 de 5 estrelas">★★★★★</div>
-            <p className="review-quote">“Maravilhoso, doce na medida certa. Sem ser enjoativo, ideal para usar em dias frios.”</p>
-            <div className="review-author"><strong>Jerusa M.</strong><span>compra verificada</span></div>
-            <a href="https://www.wepink.com.br/body-splash-obsessed-gold-200-ml-wepink/p" target="_blank" rel="noreferrer noopener">Body Splash Obsessed Gold · ver avaliação ↗</a>
-          </div>
-        </article>
-        <article className="review-card review-card-with-image">
-          <img src="https://wepink.vtexassets.com/arquivos/ids/162190/Cleanser-Essential-Sabonete-Facial-120ml_1.webp?v=638985677531100000" alt="Cleanser Essential Wepink" loading="lazy" />
-          <div className="review-card-content">
-            <div className="review-stars" aria-label="5 de 5 estrelas">★★★★★</div>
-            <p className="review-quote">“Cheiro maravilhoso, a pele fica macia e limpinha, não fico sem.”</p>
-            <div className="review-author"><strong>Fernanda P.</strong><span>compra verificada</span></div>
-            <a href="https://www.wepink.com.br/sabonete-facial-cleanser-essential/p?idsku=42537925" target="_blank" rel="noreferrer noopener">Cleanser Essential · ver avaliação ↗</a>
-          </div>
-        </article>
+      <div className="video-reviews-grid">
+        {videos.map((video) => (
+          <article className="video-review-card" key={video.id}>
+            <div className="video-review-frame">
+              <iframe
+                src={`https://www.youtube-nocookie.com/embed/${video.id}`}
+                title={video.title}
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              />
+            </div>
+            <div className="video-review-content">
+              <span>{video.product}</span>
+              <h3>{video.title}</h3>
+              <p>{video.description}</p>
+              <small>Vídeo público de {video.creator}</small>
+              <a href={`https://www.youtube.com/watch?v=${video.id}`} target="_blank" rel="noreferrer noopener">assistir no YouTube ↗</a>
+            </div>
+          </article>
+        ))}
       </div>
-      <p className="reviews-disclaimer">Trechos de avaliações publicadas nas páginas oficiais dos respectivos produtos. Confira o contexto completo na loja original.</p>
+      <p className="reviews-disclaimer">Conteúdos de terceiros incorporados a partir do YouTube. As opiniões são dos respectivos criadores e não representam garantia de resultado nem publicidade oficial da loja.</p>
     </section>
   );
 }
