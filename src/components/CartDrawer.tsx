@@ -71,7 +71,7 @@ export function CartDrawer() {
             <div className="cart-lines">
               {items.map((item) => (
                 <div className="cart-line" key={item.slug}>
-                  <SafeImage alt={item.name} height={90} src={item.image} width={90} loading="lazy" />
+                  <SafeImage alt={item.name} height={90} src={item.image} fallbackSources={[item.imageLarge, ...(item.gallery ?? []), ...(item.skus ?? []).map((sku) => sku.image)]} width={90} loading="lazy" />
                   <div>
                     <h3>{item.name}</h3>
                     <p>{formatPrice(item.price * item.quantity)}</p>
