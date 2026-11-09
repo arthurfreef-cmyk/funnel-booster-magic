@@ -1,6 +1,7 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useState, type FormEvent, type ReactNode } from "react";
 
+import { SafeImage } from "@/components/SafeImage";
 import { CartDrawer } from "@/components/CartDrawer";
 import { PrizeWheel } from "@/components/PrizeWheel";
 import {
@@ -64,7 +65,7 @@ export function Layout({ children }: { children: ReactNode }) {
       <div className="checkout-shell">
         <header className="checkout-shell-header">
           <Link className="brand" to="/">
-            <img alt="wepink" src={LOGO_PRIMARY} width={120} height={32} />
+            <SafeImage alt="wepink" src={LOGO_PRIMARY} width={120} height={32} />
           </Link>
           <Link className="checkout-exit" to="/">
             sair do checkout
@@ -89,7 +90,7 @@ export function Layout({ children }: { children: ReactNode }) {
       <header className="site-header">
         <div className="desktop-header-row">
           <Link className="brand" to="/">
-            <img alt="wepink" src={LOGO_PRIMARY} width={130} height={34} />
+            <SafeImage alt="wepink" src={LOGO_PRIMARY} width={130} height={34} />
           </Link>
           <SearchForm />
           <Link className="service-link" to="/$slug" params={{ slug: "central-de-ajuda" }}>
@@ -104,7 +105,7 @@ export function Layout({ children }: { children: ReactNode }) {
             type="button"
             onClick={openDrawer}
           >
-            <img alt="" className="cart-icon-image" src={CART_ICON} />
+            <SafeImage alt="" className="cart-icon-image" src={CART_ICON} />
             {count > 0 && <span className="cart-count">{count}</span>}
           </button>
         </div>
@@ -121,7 +122,7 @@ export function Layout({ children }: { children: ReactNode }) {
             <span />
           </button>
           <Link className="mobile-brand" to="/">
-            <img alt="wepink" src={LOGO_PRIMARY} width={90} height={24} />
+            <SafeImage alt="wepink" src={LOGO_PRIMARY} width={90} height={24} />
           </Link>
           <div className="mobile-actions">
             <button
@@ -156,7 +157,7 @@ export function Layout({ children }: { children: ReactNode }) {
           />
           <aside className="mobile-menu">
             <div className="drawer-heading">
-              <img alt="wepink" src={LOGO_PRIMARY} />
+              <SafeImage alt="wepink" src={LOGO_PRIMARY} />
               <button aria-label="Fechar" type="button" onClick={() => setMenuOpen(false)}>
                 ×
               </button>
