@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
+import { SafeImage } from "@/components/SafeImage";
 import { HERO_SLIDES } from "@/data/site";
 
 /**
@@ -40,7 +41,7 @@ export function HeroSlider() {
         <Link to="/$slug" params={{ slug: slide.href.replace(/^\//, "").replace(/\/p$/, "") }}>
           <picture>
             <source media="(max-width: 720px)" srcSet={slide.mobile} />
-            <img
+            <SafeImage
               alt={slide.alt}
               src={slide.desktop}
               width={2000}
