@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { Home } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { ProductCard } from "@/components/ProductCard";
@@ -144,6 +145,10 @@ function Catalog({ slug }: { slug: string }) {
         <span>/</span>
         {category.label}
       </nav>
+      <Link className="catalog-home-button" to="/">
+        <Home aria-hidden size={16} />
+        <span>voltar ao início</span>
+      </Link>
       <header className="catalog-header">
         <div>
           <p>categoria</p>
