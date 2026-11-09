@@ -60,9 +60,9 @@ function Newsletter() {
 
   return (
     <section className="newsletter-section">
-      <h2>receba ofertas e lançamentos em primeira mão</h2>
+      <span className="newsletter-eyebrow">clube wepink</span>\n      <h2>receba ofertas e lançamentos em primeira mão</h2>
       <p className="newsletter-subtitle">
-        cadastre seu e-mail e whatsapp e fique por dentro de tudo antes de todo mundo
+        novidades, lançamentos e ofertas especiais direto no seu e-mail e WhatsApp.
       </p>
       <form onSubmit={onSubmit}>
         <input
@@ -98,38 +98,36 @@ function Newsletter() {
   );
 }
 
-/** Só carrega o embed do Instagram quando ele chega perto da viewport. */
-function InstagramEmbed() {
-  const ref = useRef<HTMLElement | null>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const node = ref.current;
-    if (!node || visible) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          setVisible(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "300px" },
-    );
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [visible]);
-
+function CustomerReviews() {
   return (
-    <section className="instagram-section" ref={ref}>
-      <h2>@wepink</h2>
-      {visible && (
-        <iframe
-          className="instagram-frame"
-          loading="lazy"
-          src="https://www.instagram.com/wepink/embed"
-          title="Instagram wepink"
-        />
-      )}
+    <section className="reviews-section" aria-labelledby="reviews-title">
+      <div className="reviews-heading">
+        <span>quem usa, conta</span>
+        <h2 id="reviews-title">experiências que falam por si</h2>
+        <p>Confira opiniões publicadas por clientes na loja oficial Wepink.</p>
+      </div>
+      <div className="reviews-grid">
+        <article className="review-card">
+          <div className="review-stars" aria-label="5 de 5 estrelas">★★★★★</div>
+          <p className="review-quote">“Delicioso o aroma!!!! E o fixador muito bom!”</p>
+          <div className="review-author"><strong>Mônica A.</strong><span>compra verificada</span></div>
+          <a href="https://www.wepink.com.br/desod-body-splash-obsessed-deluxe-200-ml---wepink-105/p?pp=1" target="_blank" rel="noreferrer noopener">Body Splash Obsessed Deluxe ↗</a>
+        </article>
+        <article className="review-card">
+          <div className="review-stars" aria-label="5 de 5 estrelas">★★★★★</div>
+          <p className="review-quote">“Maravilhoso, doce na medida certa. Sem ser enjoativo.”</p>
+          <div className="review-author"><strong>Jerusa M.</strong><span>compra verificada</span></div>
+          <a href="https://www.wepink.com.br/body-splash-obsessed-gold-200-ml-wepink/p?sck=1766016000525.269815.91&src=" target="_blank" rel="noreferrer noopener">Body Splash Obsessed Gold ↗</a>
+        </article>
+        <article className="review-card">
+          <div className="review-stars" aria-label="5 de 5 estrelas">★★★★★</div>
+          <p className="review-quote">“Cheiro maravilhoso, a pele fica macia e limpinha.”</p>
+          <div className="review-author"><strong>Fernanda P.</strong><span>compra verificada</span></div>
+          <a href="https://www.wepink.com.br/sabonete-facial-cleanser-essential/p?idsku=42537925" target="_blank" rel="noreferrer noopener">Cleanser Essential ↗</a>
+        </article>
+      </div>
+      <a className="reviews-more" href="https://www.wepink.com.br/" target="_blank" rel="noreferrer noopener">ver produtos e avaliações na loja oficial ↗</a>
+      <p className="reviews-disclaimer">Trechos de avaliações de clientes exibidas nas páginas dos respectivos produtos na loja oficial.</p>
     </section>
   );
 }
@@ -168,7 +166,7 @@ function Home() {
 
       <Newsletter />
 
-      <InstagramEmbed />
+      <CustomerReviews />
     </>
   );
 }
