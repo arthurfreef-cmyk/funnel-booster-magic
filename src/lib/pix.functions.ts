@@ -81,16 +81,14 @@ export const createPixPayment = createServerFn({ method: "POST" })
       customer: {
         name: data.payer.name.trim(),
         email: data.payer.email.trim(),
-        phone: data.payer.phone.replace(/\D/g, ""),
         document: { type: "cpf", number: data.payer.taxId.replace(/\D/g, "") },
       },
+      // Only the fields required by Velani's documented example.
       items: data.items.map((item) => ({
         title: item.name,
         unitPrice: toVelaniCents(item.price),
         quantity: item.quantity,
       })),
-      externalId: `wepink_${crypto.randomUUID()}`,
-      description: `Pedido wepink - ${data.items.length} item(ns)`,
     });
     const parsed = velaniTransactionSchema.safeParse(json);
     if (!parsed.success || !parsed.data.data.pixQrCode) {
