@@ -128,7 +128,7 @@ function CustomerReviews() {
     <section className="reviews-section video-reviews-section" aria-labelledby="reviews-title">
       <div className="reviews-heading">
         <span>resenhas em vídeo</span>
-        <h2 id="reviews-title">veja antes de escolher</h2>
+        <h2 id="reviews-title">seu próximo favorito está a um clique</h2>
         <p>Experiências e opiniões publicadas por criadores independentes sobre produtos Wepink.</p>
       </div>
       <div className="video-reviews-grid">
