@@ -76,7 +76,7 @@ export function PrizeWheel() {
     }
     if (seen) return;
     setOpen(true);
-  }, []);
+  }, [won]);
 
   useEffect(() => {
     return () => {
@@ -97,6 +97,7 @@ export function PrizeWheel() {
 
   const close = useCallback(() => {
     setOpen(false);
+    if (won) window.dispatchEvent(new CustomEvent("wepink-wheel-completed"));
     try {
       window.sessionStorage.setItem(STORAGE_KEY, "done");
     } catch {
@@ -176,14 +177,14 @@ export function PrizeWheel() {
       <div className="wheel-modal">
         <span className="wheel-trust">✓ promoção oficial wepink</span>
         <h2>
-          {won ? "desconto liberado!" : tryAgain ? "quase! tente de novo" : "gire e garanta seu desconto"}
+          {won ? "sua oferta está pronta!" : tryAgain ? "mais uma chance para você" : "gire e descubra sua oferta"}
         </h2>
         <p className="wheel-subtitle">
           {won
-            ? "Aplicado automaticamente em todos os produtos da loja."
+            ? "Tudo certo! Continue explorando a loja e aproveite sua condição especial."
             : tryAgain
-              ? "Não foi dessa vez. Você ainda tem mais chances — gire novamente!"
-              : "Você tem 3 chances. O prêmio é aplicado direto no carrinho."}
+              ? "A primeira rodada passou. Gire mais uma vez para descobrir sua surpresa."
+              : "É rapidinho: gire a roleta e descubra a surpresa preparada para sua visita."}
         </p>
 
         <div className="wheel-stage">
@@ -238,8 +239,7 @@ export function PrizeWheel() {
         {won ? (
           <>
             <p className="wheel-result">
-              Você ganhou <strong>{PRIZES[WINNING_INDEX]!.label}</strong> — já aplicado em todos os
-              produtos da loja.
+              Você ganhou <strong>{PRIZES[WINNING_INDEX]!.label}</strong>! Continue para conhecer os produtos e aproveitar sua oferta.
             </p>
             <button className="checkout-button" type="button" onClick={close}>
               aproveitar agora
@@ -247,16 +247,15 @@ export function PrizeWheel() {
           </>
         ) : (
           <button className="checkout-button" disabled={spinning} type="button" onClick={spin}>
-            {spinning ? "girando..." : tryAgain ? "girar novamente" : "girar a roleta"}
+            {spinning ? "sorteando..." : tryAgain ? "tentar minha sorte" : "quero descobrir"}
           </button>
         )}
 
         <p className="wheel-proof">
-          <span aria-hidden className="wheel-dot" /> 1.284 pessoas giraram nas últimas 24h
+          <span aria-hidden className="wheel-dot" /> leva só alguns segundos para participar
         </p>
         <small>
-          Promoção por tempo limitado, válida enquanto durarem os estoques e cumulativa apenas com o
-          frete grátis acima de R$ 199.
+          Consulte as condições da oferta antes de finalizar seu pedido. O frete grátis segue as condições informadas na loja.
         </small>
       </div>
     </div>
