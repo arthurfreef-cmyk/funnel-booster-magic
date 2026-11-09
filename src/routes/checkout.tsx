@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Bolt, Loader2, Lock, RefreshCcw, ShieldCheck, Truck } from "lucide-react";
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 
 import { CardModal } from "@/components/CardModal";
 import { PixModal } from "@/components/PixModal";
@@ -80,13 +80,13 @@ function CheckoutRoute() {
   const cepAbortRef = useRef<AbortController | null>(null);
   const bumpAdded = items.some((item) => item.slug === ORDER_BUMP.slug);
 
-  const handleOptionalAccount = (user: { email?: string; user_metadata?: { full_name?: string; name?: string } }) => {
+  const handleOptionalAccount = useCallback((user: { email?: string; user_metadata?: { full_name?: string; name?: string } }) => {
     setForm((current) => ({
       ...current,
       name: current.name || user.user_metadata?.full_name || user.user_metadata?.name || "",
       email: current.email || user.email || "",
     }));
-  };
+  }, []);
 
 
   // Reaproveita o CEP/endereço simulado no carrinho.
