@@ -87,7 +87,7 @@ export function ProductReviews({ product }: { product: Product }) {
       ) : (
         <div className="product-reviews-empty">
           <p>Ainda não encontramos avaliações públicas verificáveis para este item específico.</p>
-          <a href="https://www.wepink.com.br/" target="_blank" rel="noreferrer noopener">consultar a loja oficial ↗</a>
+          <a href={`https://www.wepink.com.br/${product.slug}/p`} target="_blank" rel="noreferrer noopener">ver avaliações deste produto na loja oficial ↗</a>
         </div>
       )}
       <p className="product-reviews-disclaimer">As avaliações exibidas são trechos de comentários publicados nas páginas oficiais dos produtos. As notas e quantidades podem mudar na loja original.</p>
