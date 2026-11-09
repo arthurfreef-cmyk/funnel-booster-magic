@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 
+import { SafeImage } from "@/components/SafeImage";
 import { CART_ICON } from "@/data/site";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/format";
@@ -59,7 +60,7 @@ export function CartDrawer() {
 
         {items.length === 0 ? (
           <div className="empty-cart">
-            <img alt="" className="cart-icon-image" src={CART_ICON} />
+            <SafeImage alt="" className="cart-icon-image" src={CART_ICON} />
             <p>Sua cesta está vazia.</p>
             <button type="button" onClick={closeDrawer}>
               continuar comprando
@@ -70,7 +71,7 @@ export function CartDrawer() {
             <div className="cart-lines">
               {items.map((item) => (
                 <div className="cart-line" key={item.slug}>
-                  <img alt={item.name} height={90} src={item.image} width={90} loading="lazy" />
+                  <SafeImage alt={item.name} height={90} src={item.image} width={90} loading="lazy" />
                   <div>
                     <h3>{item.name}</h3>
                     <p>{formatPrice(item.price * item.quantity)}</p>
