@@ -9,5 +9,6 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-- PIX creation and status checks use the Velani connector gateway exclusively; provider credentials must remain server-side.
-- Parse Velani payment responses with the shared payment contract before displaying a QR code or confirming payment.
+- PIX creation and status checks use the Fruitfy API (api.fruitfy.io) exclusively; the token and Store-Id must remain server-side.
+- Every order is charged against the single generic Fruitfy store product at the exact order total, so PIX works for any product in the catalog.
+- Parse Fruitfy payment responses with the shared payment contract (src/lib/fruitfy.ts) before displaying a QR code or confirming payment.

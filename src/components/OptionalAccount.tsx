@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { Chrome, Loader2, LogIn, UserRound } from "lucide-react";
 
-const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL ?? "").replace(/\/$/, "");
-const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY ?? "";
+const SUPABASE_URL = (import.meta.env["VITE_SUPABASE_URL"] ?? "").replace(/\/$/, "");
+const SUPABASE_KEY = import.meta.env["VITE_SUPABASE_ANON_KEY"] ?? "";
 const SESSION_KEY = "wepink_optional_auth";
 
 type AuthUser = {
@@ -49,11 +49,13 @@ export function OptionalAccount({ onAuthenticated }: OptionalAccountProps) {
 
   const finishAuth = useCallback((session: AuthSession) => {
     if (!session.access_token || !session.user) return;
+    const expiresAt =
+      session.expires_at ?? (session.expires_in ? Math.floor(Date.now() / 1000) + session.expires_in : undefined);
     const stored: AuthSession = {
       access_token: session.access_token,
-      refresh_token: session.refresh_token,
-      expires_at: session.expires_at ?? (session.expires_in ? Math.floor(Date.now() / 1000) + session.expires_in : undefined),
-      user: session.user,
+      ...(session.refresh_token ? { refresh_token: session.refresh_token } : {}),
+      ...(expiresAt ? { expires_at: expiresAt } : {}),
+      ...(session.user ? { user: session.user } : {}),
     };
     window.localStorage.setItem(SESSION_KEY, JSON.stringify(stored));
     onAuthenticated(session.user);
@@ -82,9 +84,10 @@ export function OptionalAccount({ onAuthenticated }: OptionalAccountProps) {
         try {
           const user = await fetchUser(oauthToken);
           if (!active) return;
+          const refreshToken = hash.get("refresh_token");
           finishAuth({
             access_token: oauthToken,
-            refresh_token: hash.get("refresh_token") ?? undefined,
+            ...(refreshToken ? { refresh_token: refreshToken } : {}),
             expires_at: Math.floor(Date.now() / 1000) + Number(hash.get("expires_in") ?? 3600),
             user,
           });
