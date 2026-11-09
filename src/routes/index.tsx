@@ -117,7 +117,7 @@ function CustomerReviews() {
           </div>
         </article>
         <article className="review-card review-card-with-image">
-          <img src="https://wepink.vtexassets.com/arquivos/ids/162323/159942-1200-auto.webp?v=638986082590870000" alt="Obsessed Gold Wepink" loading="lazy" />
+          <img src="https://wepink.vtexassets.com/arquivos/ids/162328/160983-1200-auto.webp?v=638986077374730000" alt="Obsessed Gold Wepink" loading="lazy" />
           <div className="review-card-content">
             <div className="review-stars" aria-label="5 de 5 estrelas">★★★★★</div>
             <p className="review-quote">“Maravilhoso, doce na medida certa. Sem ser enjoativo, ideal para usar em dias frios.”</p>
