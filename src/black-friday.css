@@ -283,3 +283,33 @@
  .optional-account-copy strong{font-size:13px}
  .checkout-head:after{margin-top:7px}
 }
+
+
+/* Botão de retorno à página inicial no checkout */
+.checkout-home-button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  width:max-content;
+  min-height:38px;
+  margin:0 0 14px;
+  padding:0 13px;
+  border:1px solid #eadde3;
+  border-radius:8px;
+  background:#fff;
+  color:#292029;
+  font-size:12px;
+  font-weight:700;
+  text-decoration:none;
+  transition:background .18s ease,border-color .18s ease,color .18s ease;
+}
+.checkout-home-button:hover{
+  border-color:#ec2d7f;
+  background:#fff4f8;
+  color:#d81e6c;
+}
+.checkout-home-button:focus-visible{
+  outline:3px solid #ec2d7f45;
+  outline-offset:2px;
+}
