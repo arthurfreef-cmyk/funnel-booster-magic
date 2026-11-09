@@ -93,7 +93,7 @@ function Newsletter() {
         <button type="submit">quero receber</button>
       </form>
       {error && <p className="form-error">{error}</p>}
-      {sent && <p className="form-success">Pronto! Você está na nossa lista. ♥</p>}
+      {sent && <p className="form-success">Cadastro validado. A ativação do recebimento de novidades ainda precisa ser concluída.</p>}
     </section>
   );
 }
