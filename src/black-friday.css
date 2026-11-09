@@ -240,3 +240,46 @@
  .store-pin{width:62px;height:62px;font-size:38px}
  .institutional-help-note{padding:18px}
 }
+
+
+/* Optional customer account — Wepink Black Friday checkout */
+.optional-account{position:relative;margin:0 0 18px;padding:18px 20px;border:1px solid #f1c4d8;border-radius:14px;background:linear-gradient(112deg,#fff4f8 0%,#fff 76%);overflow:hidden}
+.optional-account:before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:#ec2d7f}
+.optional-account-topline{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.optional-account-badge{display:inline-flex;align-items:center;padding:5px 9px;border-radius:5px;background:#101010;color:#fff;font-size:9px;font-weight:900;letter-spacing:.13em}
+.optional-account-spark{color:#ec2d7f;font-size:18px}
+.optional-account-copy{display:flex;align-items:center;gap:12px}
+.optional-account-icon{flex:0 0 40px;width:40px;height:40px;display:grid;place-items:center;border-radius:12px;background:#ffe4ef;color:#d81e6c}
+.optional-account-copy strong{display:block;color:#171217;font-size:14px;font-weight:800}
+.optional-account-copy p{margin:4px 0 0;color:#777;font-size:12px;line-height:1.5}
+.optional-account-actions{display:flex;gap:9px;margin-top:14px}
+.optional-account-actions button,.optional-account-submit{min-height:40px;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:0 13px;border-radius:8px;font-size:12px;font-weight:800;transition:background .18s,border-color .18s,transform .18s}
+.optional-account-google{flex:1;background:#101010;color:#fff;border:1px solid #101010}
+.optional-account-google:hover:not(:disabled){background:#292929;transform:translateY(-1px)}
+.optional-account-email{background:#fff;color:#d81e6c;border:1px solid #efb2cd}
+.optional-account-email:hover{background:#fff0f6}
+.optional-account-actions button:disabled,.optional-account-submit:disabled{opacity:.55;cursor:not-allowed}
+.optional-account-form{display:grid;gap:11px;margin-top:15px;padding-top:14px;border-top:1px solid #f2d9e4}
+.optional-account-tabs{display:flex;gap:6px}
+.optional-account-tabs button{padding:7px 12px;border-radius:7px;background:#f6f1f3;color:#777;font-size:11px;font-weight:800}
+.optional-account-tabs button.active{background:#101010;color:#fff}
+.optional-account-form label{display:grid;gap:5px;color:#555;font-size:11px;font-weight:700}
+.optional-account-form input{width:100%;min-height:42px;padding:0 12px;border:1px solid #e8dfe3;border-radius:7px;background:#fff;color:#171217;font-size:13px}
+.optional-account-form input:focus{outline:2px solid #ec2d7f35;border-color:#ec2d7f}
+.optional-account-submit{width:100%;background:#ec2d7f;color:#fff;border:1px solid #ec2d7f}
+.optional-account-submit:hover:not(:disabled){background:#d81e6c}
+.optional-account-hint,.optional-account-error,.optional-account-success{margin:0;font-size:11px;line-height:1.5}
+.optional-account-hint{color:#8a6575}
+.optional-account-error{margin-top:10px;color:#b42318}
+.optional-account-success{margin-top:10px;color:#16804a}
+.optional-account-guest{margin:12px 0 0;color:#777;font-size:11px}
+.optional-account-guest strong{color:#292029}
+.checkout-head{position:relative}
+.checkout-head:after{content:"BLACK FRIDAY WEPINK";display:inline-flex;align-items:center;margin-top:9px;padding:5px 9px;border-radius:4px;background:#101010;color:#fff;font-size:9px;font-weight:900;letter-spacing:.13em;border-left:3px solid #ec2d7f}
+@media(max-width:600px){
+ .optional-account{padding:15px 14px;margin-bottom:14px}
+ .optional-account-actions{flex-direction:column}
+ .optional-account-actions button{width:100%}
+ .optional-account-copy strong{font-size:13px}
+ .checkout-head:after{margin-top:7px}
+}
