@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Bolt, Loader2, Lock, RefreshCcw, ShieldCheck, Truck } from "lucide-react";
+import { Bolt, Home, Loader2, Lock, RefreshCcw, ShieldCheck, Truck } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 
 import { CardModal } from "@/components/CardModal";
@@ -370,6 +370,10 @@ function CheckoutRoute() {
       </nav>
 
       <div className="checkout-head">
+        <Link className="checkout-home-button" to="/">
+          <Home aria-hidden size={16} />
+          <span>voltar ao início</span>
+        </Link>
         <h1>checkout seguro</h1>
         <p className="checkout-steps-hint">
           <Lock aria-hidden size={14} /> ambiente criptografado · leva menos de 1 minuto
