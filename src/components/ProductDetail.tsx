@@ -46,6 +46,10 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
   return (
     <div className="product-page">
+      <Link className="product-home-button" to="/">
+        <span aria-hidden="true">←</span>
+        voltar ao início
+      </Link>
       <nav className="breadcrumbs" aria-label="Você está em">
         <Link to="/">home</Link>
         <span>/</span>
