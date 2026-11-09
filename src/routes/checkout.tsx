@@ -344,6 +344,10 @@ function CheckoutRoute() {
   const cls = (key: keyof FormState, autofilled = false) =>
     err(key) ? "field-invalid" : autofilled && cepFilled ? "autofilled" : undefined;
 
+  if (payment) {
+    return <PixModal payment={payment} amount={effectiveTotal} onClose={() => setPayment(null)} onPaid={onPaid} />;
+  }
+
   if (hydrated && items.length === 0) {
     return (
       <div className="checkout-page removed-page">
@@ -861,9 +865,6 @@ function CheckoutRoute() {
 
       {cardOpen && <CardModal amount={effectiveTotal} onClose={() => setCardOpen(false)} />}
 
-      {payment && (
-        <PixModal amount={effectiveTotal} payment={payment} onClose={() => setPayment(null)} onPaid={onPaid} />
-      )}
     </div>
 
   );
