@@ -32,6 +32,14 @@ export function HeroSlider() {
             decoding="async"
           />
         </picture>
+        {index === 0 && (
+          <div className="hero-black-friday-copy" aria-hidden="true">
+            <span>BLACK FRIDAY WEPINK</span>
+            <strong>seu momento mais rosa começa aqui</strong>
+            <small>descubra os kits e ofertas especiais</small>
+            <em>explorar ofertas <b>↗</b></em>
+          </div>
+        )}
       </Link>
       <button
         aria-label="Anterior"
