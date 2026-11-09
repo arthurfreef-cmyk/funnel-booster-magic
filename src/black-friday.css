@@ -207,3 +207,36 @@
   .buy-button,
   .checkout-button { transition: none; }
 }
+
+
+/* Páginas funcionais de atendimento e localização */
+.institutional-page.support-page article,.institutional-page.stores-page article{max-width:1040px}
+.institutional-page.support-page article>h1,.institutional-page.stores-page article>h1{margin-bottom:14px}
+.institutional-page.support-page article>p:not(.detail-eyebrow),.institutional-page.stores-page article>p:not(.detail-eyebrow){max-width:760px;color:#555;font-size:15px;line-height:1.7}
+.institutional-contact-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:34px 0 28px}
+.institutional-contact-card{min-width:0;min-height:230px;padding:23px 20px;border:1px solid #eee;border-radius:15px;background:#fff;display:flex;flex-direction:column;align-items:flex-start;gap:8px;transition:transform .2s,border-color .2s,box-shadow .2s}
+.institutional-contact-card:hover{transform:translateY(-3px);border-color:#f1a4c6;box-shadow:0 12px 28px #ec2d7f14}
+.institutional-contact-card.primary-contact{background:#fff3f8;border-color:#f4bfd6}
+.institutional-card-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:12px;background:#fff;color:var(--pink);font-size:23px}
+.institutional-card-label{color:var(--pink);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.institutional-contact-card strong{font-size:17px;line-height:1.35;overflow-wrap:anywhere}
+.institutional-contact-card small{color:#777;font-size:12px;line-height:1.5}
+.institutional-card-action{margin-top:auto;padding-top:10px;color:var(--pink);font-size:13px;font-weight:800}
+.institutional-help-note{padding:22px 24px;border:1px solid #f2d5e2;border-radius:14px;background:#fff8fb}
+.institutional-help-note strong{font-size:15px}
+.institutional-help-note p{margin:7px 0 12px;color:#666;font-size:13px;line-height:1.6}
+.institutional-help-note a{color:var(--pink);font-size:13px;font-weight:800}
+.institutional-store-panel{display:grid;grid-template-columns:100px 1fr;align-items:center;gap:24px;margin:34px 0 18px;padding:30px;border:1px solid #f2d5e2;border-radius:18px;background:linear-gradient(115deg,#fff2f8,#fff 72%)}
+.store-pin{width:78px;height:78px;display:grid;place-items:center;border-radius:50%;background:#fff;color:var(--pink);font-size:48px;box-shadow:0 6px 24px #ec2d7f17}
+.institutional-store-panel h2{margin:7px 0;font-size:clamp(21px,3vw,29px);font-weight:800;letter-spacing:-.04em}
+.institutional-store-panel p{margin:0 0 18px;color:#666;font-size:14px;line-height:1.6}
+.institutional-primary-button{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 22px;border-radius:8px;background:var(--pink);color:#fff;font-size:13px;font-weight:800;transition:background .2s}
+.institutional-primary-button:hover{background:var(--pink-dark)}
+.institutional-page.support-page article>.institutional-store-footnote,.institutional-store-footnote{font-size:12px!important;color:#888!important}
+@media(max-width:760px){
+ .institutional-contact-grid{grid-template-columns:1fr;gap:12px;margin:25px 0 20px}
+ .institutional-contact-card{min-height:0;padding:19px}
+ .institutional-store-panel{grid-template-columns:1fr;gap:14px;padding:22px}
+ .store-pin{width:62px;height:62px;font-size:38px}
+ .institutional-help-note{padding:18px}
+}
