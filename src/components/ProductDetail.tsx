@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 
+import { SafeImage } from "@/components/SafeImage";
 import { Shelf } from "@/components/Shelf";
 import { ProductReviews } from "@/components/ProductReviews";
 import { BADGE_BEST_SELLER, BADGE_LANCAMENTO, PRODUCTS, type Product } from "@/data/site";
@@ -71,12 +72,12 @@ export function ProductDetail({ product }: ProductDetailProps) {
                 type="button"
                 onClick={() => setActive(index)}
               >
-                <img alt="" loading="lazy" src={image} />
+                <SafeImage alt="" loading="lazy" src={image} />
               </button>
             ))}
           </div>
           <div className="detail-main-image">
-            <img
+            <SafeImage
               alt={product.name}
               decoding="async"
               fetchPriority="high"
@@ -90,7 +91,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
                 <small>OFF</small>
               </span>
             )}
-            {badge && <img alt={badge.alt} className="detail-badge" loading="lazy" src={badge.src} />}
+            {badge && <SafeImage alt={badge.alt} className="detail-badge" loading="lazy" src={badge.src} />}
           </div>
         </div>
 
