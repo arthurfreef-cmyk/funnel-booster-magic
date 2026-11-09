@@ -157,6 +157,28 @@ export function CartDrawer() {
                   <strong>{formatPrice(total)}</strong>
                 </p>
               </div>
+              <Link
+                to="/"
+                onClick={closeDrawer}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100%",
+                  minHeight: 44,
+                  marginBottom: 10,
+                  border: "1px solid #d9a1b5",
+                  borderRadius: 8,
+                  color: "#a94f70",
+                  background: "transparent",
+                  fontSize: 13,
+                  fontWeight: 600,
+                  textDecoration: "none",
+                  letterSpacing: "0.02em",
+                }}
+              >
+                + adicionar mais itens
+              </Link>
               <Link className="checkout-button" to="/checkout" onClick={closeDrawer}>
                 finalizar compra
               </Link>
