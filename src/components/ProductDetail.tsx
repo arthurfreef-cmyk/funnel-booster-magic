@@ -83,6 +83,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
               fetchPriority="high"
               height={900}
               src={gallery[active] ?? product.image}
+              fallbackSources={[...gallery.filter((_, index) => index !== active), product.image, ...(product.skus ?? []).map((option) => option.image)]}
               width={900}
             />
             {discount > 0 && (
