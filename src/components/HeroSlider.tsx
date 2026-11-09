@@ -9,12 +9,20 @@ import { HERO_SLIDES } from "@/data/site";
  */
 export function HeroSlider() {
   const [index, setIndex] = useState(0);
+  const [wheelCompleted, setWheelCompleted] = useState(false);
   const total = HERO_SLIDES.length;
 
   useEffect(() => {
-    const id = window.setInterval(() => setIndex((i) => (i + 1) % total), 6000);
+    const startBanners = () => setWheelCompleted(true);
+    window.addEventListener("wepink-wheel-completed", startBanners);
+    return () => window.removeEventListener("wepink-wheel-completed", startBanners);
+  }, []);
+
+  useEffect(() => {
+    if (!wheelCompleted) return;
+    const id = window.setInterval(() => setIndex((i) => (i + 1) % total), 5000);
     return () => window.clearInterval(id);
-  }, [total]);
+  }, [total, wheelCompleted]);
 
   const slide = HERO_SLIDES[index]!;
 
