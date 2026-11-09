@@ -52,6 +52,14 @@ export const CATEGORIES: { label: string; slug: string }[] = [
 export const HERO_SLIDES = [
   {
     href: "/kits",
+    campaign: true,
+    desktop: "",
+    mobile: "",
+    alt: "Black Friday Wepink — ofertas especiais",
+  },
+
+  {
+    href: "/kits",
     desktop:
       "https://wepink.vtexassets.com/assets/vtex.file-manager-graphql/images/f2f928b4-f06c-4538-9213-bdc2e1a4fd07___225db6eba41f0bb3e83486f82ad17a51.gif",
     mobile:
