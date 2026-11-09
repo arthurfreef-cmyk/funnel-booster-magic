@@ -84,11 +84,17 @@ export const createPixPayment = createServerFn({ method: "POST" })
         document: { type: "cpf", number: data.payer.taxId.replace(/\D/g, "") },
       },
       // Only the fields required by Velani's documented example.
-      items: data.items.map((item) => ({
-        title: item.name,
-        unitPrice: toVelaniCents(item.price),
-        quantity: item.quantity,
-      })),
+      items: [
+        ...data.items.map((item) => ({
+          title: item.name,
+          unitPrice: toVelaniCents(item.price),
+          quantity: item.quantity,
+        })),
+        // Keep amount equal to the item sum: shipping becomes its own line.
+        ...(data.shipping > 0
+          ? [{ title: "Frete", unitPrice: toVelaniCents(data.shipping), quantity: 1 }]
+          : []),
+      ],
     });
     const parsed = velaniTransactionSchema.safeParse(json);
     if (!parsed.success || !parsed.data.data.pixQrCode) {
