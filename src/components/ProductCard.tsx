@@ -33,6 +33,7 @@ function ProductCardBase({ product, priority = false }: ProductCardProps) {
           width={700}
           height={700}
           src={product.image}
+          fallbackSources={[product.imageLarge, ...(product.gallery ?? []), ...(product.skus ?? []).map((sku) => sku.image)]}
         />
         {discount > 0 && (
           <span aria-label={`${discount}% de desconto`} className="marketing-discount-badge">
