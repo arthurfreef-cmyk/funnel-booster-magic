@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 
 import { Shelf } from "@/components/Shelf";
+import { ProductReviews } from "@/components/ProductReviews";
 import { BADGE_BEST_SELLER, BADGE_LANCAMENTO, PRODUCTS, type Product } from "@/data/site";
 import { useCart } from "@/lib/cart";
 import { discountPercent, formatPrice, installment } from "@/lib/format";
@@ -182,6 +183,8 @@ export function ProductDetail({ product }: ProductDetailProps) {
           </p>
         </div>
       </section>
+
+      <ProductReviews product={product} />
 
       {related.length > 0 && (
         <Shelf className="recommendations" products={related} title="você também vai amar" />
