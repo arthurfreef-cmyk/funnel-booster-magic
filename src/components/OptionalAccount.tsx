@@ -65,49 +65,54 @@ export function OptionalAccount({ onAuthenticated }: OptionalAccountProps) {
   useEffect(() => {
     if (!configured) return;
     let active = true;
-    const loadUser = async (token: string) => {
-      try {
-        const response = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
-          headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${token}` },
-        });
-        if (!response.ok) return;
-        const user = (await response.json()) as AuthUser;
-        if (active) onAuthenticated(user);
-      } catch {
-        // A compra como visitante continua disponível mesmo se a sessão não puder ser restaurada.
-      }
+
+    const fetchUser = async (token: string) => {
+      const response = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+        headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) throw new Error("Sessão expirada");
+      return (await response.json()) as AuthUser;
     };
 
     const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
     const oauthToken = hash.get("access_token");
+
     if (oauthToken) {
-      void loadUser(oauthToken).then(() => {
-        if (!active) return;
-        const expiresIn = Number(hash.get("expires_in") ?? 3600);
-        const refreshToken = hash.get("refresh_token") ?? undefined;
-        void fetch(`${SUPABASE_URL}/auth/v1/user`, {
-          headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${oauthToken}` },
-        }).then(async (response) => {
-          if (!response.ok || !active) return;
-          const user = (await response.json()) as AuthUser;
+      void (async () => {
+        try {
+          const user = await fetchUser(oauthToken);
           if (!active) return;
           finishAuth({
             access_token: oauthToken,
-            refresh_token: refreshToken,
-            expires_at: Math.floor(Date.now() / 1000) + expiresIn,
+            refresh_token: hash.get("refresh_token") ?? undefined,
+            expires_at: Math.floor(Date.now() / 1000) + Number(hash.get("expires_in") ?? 3600),
             user,
           });
           window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
-        }).catch(() => undefined);
-      });
+        } catch {
+          if (active) setError("Não foi possível concluir o acesso com Google. Tente novamente ou continue como visitante.");
+        }
+      })();
     } else {
-      try {
-        const stored = JSON.parse(window.localStorage.getItem(SESSION_KEY) ?? "null") as AuthSession | null;
-        if (stored?.access_token) void loadUser(stored.access_token);
-      } catch {
-        window.localStorage.removeItem(SESSION_KEY);
-      }
+      void (async () => {
+        try {
+          const stored = JSON.parse(window.localStorage.getItem(SESSION_KEY) ?? "null") as AuthSession | null;
+          if (!stored?.access_token) return;
+          let session = stored;
+          if (stored.expires_at && stored.expires_at <= Math.floor(Date.now() / 1000) + 60 && stored.refresh_token) {
+            session = await authRequest("token?grant_type=refresh_token", { refresh_token: stored.refresh_token });
+            if (!active) return;
+            finishAuth(session);
+            return;
+          }
+          const user = await fetchUser(stored.access_token);
+          if (active) onAuthenticated(user);
+        } catch {
+          if (active) window.localStorage.removeItem(SESSION_KEY);
+        }
+      })();
     }
+
     return () => { active = false; };
   }, [configured, onAuthenticated, finishAuth]);
 
@@ -148,6 +153,8 @@ export function OptionalAccount({ onAuthenticated }: OptionalAccountProps) {
     const redirect = encodeURIComponent(window.location.origin + window.location.pathname + window.location.search);
     window.location.assign(`${SUPABASE_URL}/auth/v1/authorize?provider=google&redirect_to=${redirect}`);
   };
+
+  if (!configured) return null;
 
   return (
     <section className="optional-account" aria-label="Cadastro opcional">
