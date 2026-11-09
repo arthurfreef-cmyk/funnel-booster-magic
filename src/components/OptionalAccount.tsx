@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Chrome, Loader2, LogIn, UserRound, X } from "lucide-react";
+import { Chrome, Loader2, LogIn, UserRound } from "lucide-react";
 
 const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL ?? "").replace(/\/$/, "");
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY ?? "";
@@ -14,6 +14,7 @@ type AuthSession = {
   access_token: string;
   refresh_token?: string;
   expires_at?: number;
+  expires_in?: number;
   user?: AuthUser;
 };
 
