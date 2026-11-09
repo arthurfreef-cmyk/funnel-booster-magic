@@ -29,7 +29,7 @@ export function HeroSlider() {
           <span className="hero-bf-decoration" aria-hidden="true">W</span>
         </Link>
       ) : (
-        <Link to="/$slug" params={{ slug: slide.href.replace(/^\\/|\\/p$/g, "") }}>
+        <Link to="/$slug" params={{ slug: slide.href.replace(/^\//, "").replace(/\/p$/, "") }}>
           <picture>
             <source media="(max-width: 720px)" srcSet={slide.mobile} />
             <img
