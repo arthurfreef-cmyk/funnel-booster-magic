@@ -60,7 +60,8 @@ function Newsletter() {
 
   return (
     <section className="newsletter-section">
-      <span className="newsletter-eyebrow">clube wepink</span>\n      <h2>receba ofertas e lançamentos em primeira mão</h2>
+      <span className="newsletter-eyebrow">clube wepink</span>
+      <h2>receba ofertas e lançamentos em primeira mão</h2>
       <p className="newsletter-subtitle">
         novidades, lançamentos e ofertas especiais direto no seu e-mail e WhatsApp.
       </p>
