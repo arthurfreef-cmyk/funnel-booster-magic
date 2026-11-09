@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Chrome, Loader2, LogIn, UserRound } from "lucide-react";
 
 const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL ?? "").replace(/\/$/, "");
@@ -47,7 +47,7 @@ export function OptionalAccount({ onAuthenticated }: OptionalAccountProps) {
 
   const configured = Boolean(SUPABASE_URL && SUPABASE_KEY);
 
-  const finishAuth = (session: AuthSession) => {
+  const finishAuth = useCallback((session: AuthSession) => {
     if (!session.access_token || !session.user) return;
     const stored: AuthSession = {
       access_token: session.access_token,
@@ -60,7 +60,7 @@ export function OptionalAccount({ onAuthenticated }: OptionalAccountProps) {
     setMessage("Acesso conectado. Seus dados de identificação foram preenchidos.");
     setError("");
     setExpanded(false);
-  };
+  }, [onAuthenticated]);
 
   useEffect(() => {
     if (!configured) return;
@@ -109,7 +109,7 @@ export function OptionalAccount({ onAuthenticated }: OptionalAccountProps) {
       }
     }
     return () => { active = false; };
-  }, [configured]);
+  }, [configured, onAuthenticated, finishAuth]);
 
   const submit = async () => {
     setError("");
@@ -125,7 +125,7 @@ export function OptionalAccount({ onAuthenticated }: OptionalAccountProps) {
     setBusy(true);
     try {
       const session = mode === "signup"
-        ? await authRequest("signup", { email: email.trim(), password, data: { full_name: fullName.trim() } })
+        ? await authRequest("signup", { email: email.trim(), password, data: { full_name: fullName.trim() }, options: { emailRedirectTo: window.location.origin + "/checkout" } })
         : await authRequest("token?grant_type=password", { email: email.trim(), password });
       if (session.access_token && session.user) {
         finishAuth(session);
