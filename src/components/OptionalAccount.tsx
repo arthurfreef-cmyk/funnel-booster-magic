@@ -82,9 +82,10 @@ export function OptionalAccount({ onAuthenticated }: OptionalAccountProps) {
         try {
           const user = await fetchUser(oauthToken);
           if (!active) return;
+          const refreshToken = hash.get("refresh_token");
           finishAuth({
             access_token: oauthToken,
-            refresh_token: hash.get("refresh_token") ?? undefined,
+            ...(refreshToken ? { refresh_token: refreshToken } : {}),
             expires_at: Math.floor(Date.now() / 1000) + Number(hash.get("expires_in") ?? 3600),
             user,
           });
