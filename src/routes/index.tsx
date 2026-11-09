@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 
 import { HeroSlider } from "@/components/HeroSlider";
 import { Shelf } from "@/components/Shelf";
@@ -102,32 +102,40 @@ function CustomerReviews() {
   return (
     <section className="reviews-section" aria-labelledby="reviews-title">
       <div className="reviews-heading">
-        <span>quem usa, conta</span>
-        <h2 id="reviews-title">experiências que falam por si</h2>
-        <p>Confira opiniões publicadas por clientes na loja oficial Wepink.</p>
+        <span>opiniões reais de clientes</span>
+        <h2 id="reviews-title">quem experimenta, conta</h2>
+        <p>Veja o que clientes disseram sobre produtos específicos da Wepink.</p>
       </div>
       <div className="reviews-grid">
-        <article className="review-card">
-          <div className="review-stars" aria-label="5 de 5 estrelas">★★★★★</div>
-          <p className="review-quote">“Delicioso o aroma!!!! E o fixador muito bom!”</p>
-          <div className="review-author"><strong>Mônica A.</strong><span>compra verificada</span></div>
-          <a href="https://www.wepink.com.br/desod-body-splash-obsessed-deluxe-200-ml---wepink-105/p?pp=1" target="_blank" rel="noreferrer noopener">Body Splash Obsessed Deluxe ↗</a>
+        <article className="review-card review-card-with-image">
+          <img src="https://wepink.vtexassets.com/arquivos/ids/162339/161013-1200-auto.webp?v=638986082590870000" alt="Body Splash Obsessed Deluxe" loading="lazy" />
+          <div className="review-card-content">
+            <div className="review-stars" aria-label="5 de 5 estrelas">★★★★★</div>
+            <p className="review-quote">“Qualidade incrível por um bom preço. Delicioso o aroma!!!! E o fixador muito bom!”</p>
+            <div className="review-author"><strong>Mônica R.</strong><span>compra verificada</span></div>
+            <a href="https://www.wepink.com.br/desod-body-splash-obsessed-deluxe-200-ml---wepink-105/p?pp=1" target="_blank" rel="noreferrer noopener">Body Splash Obsessed Deluxe · ver avaliação ↗</a>
+          </div>
         </article>
-        <article className="review-card">
-          <div className="review-stars" aria-label="5 de 5 estrelas">★★★★★</div>
-          <p className="review-quote">“Maravilhoso, doce na medida certa. Sem ser enjoativo.”</p>
-          <div className="review-author"><strong>Jerusa M.</strong><span>compra verificada</span></div>
-          <a href="https://www.wepink.com.br/body-splash-obsessed-gold-200-ml-wepink/p?sck=1766016000525.269815.91&src=" target="_blank" rel="noreferrer noopener">Body Splash Obsessed Gold ↗</a>
+        <article className="review-card review-card-with-image">
+          <img src="https://wepink.vtexassets.com/arquivos/ids/162323/159942-1200-auto.webp?v=638986082590870000" alt="Obsessed Gold Wepink" loading="lazy" />
+          <div className="review-card-content">
+            <div className="review-stars" aria-label="5 de 5 estrelas">★★★★★</div>
+            <p className="review-quote">“Maravilhoso, doce na medida certa. Sem ser enjoativo, ideal para usar em dias frios.”</p>
+            <div className="review-author"><strong>Jerusa M.</strong><span>compra verificada</span></div>
+            <a href="https://www.wepink.com.br/body-splash-obsessed-gold-200-ml-wepink/p" target="_blank" rel="noreferrer noopener">Body Splash Obsessed Gold · ver avaliação ↗</a>
+          </div>
         </article>
-        <article className="review-card">
-          <div className="review-stars" aria-label="5 de 5 estrelas">★★★★★</div>
-          <p className="review-quote">“Cheiro maravilhoso, a pele fica macia e limpinha.”</p>
-          <div className="review-author"><strong>Fernanda P.</strong><span>compra verificada</span></div>
-          <a href="https://www.wepink.com.br/sabonete-facial-cleanser-essential/p?idsku=42537925" target="_blank" rel="noreferrer noopener">Cleanser Essential ↗</a>
+        <article className="review-card review-card-with-image">
+          <img src="https://wepink.vtexassets.com/arquivos/ids/162190/Cleanser-Essential-Sabonete-Facial-120ml_1.webp?v=638985677531100000" alt="Cleanser Essential Wepink" loading="lazy" />
+          <div className="review-card-content">
+            <div className="review-stars" aria-label="5 de 5 estrelas">★★★★★</div>
+            <p className="review-quote">“Cheiro maravilhoso, a pele fica macia e limpinha, não fico sem.”</p>
+            <div className="review-author"><strong>Fernanda P.</strong><span>compra verificada</span></div>
+            <a href="https://www.wepink.com.br/sabonete-facial-cleanser-essential/p?idsku=42537925" target="_blank" rel="noreferrer noopener">Cleanser Essential · ver avaliação ↗</a>
+          </div>
         </article>
       </div>
-      <a className="reviews-more" href="https://www.wepink.com.br/" target="_blank" rel="noreferrer noopener">ver produtos e avaliações na loja oficial ↗</a>
-      <p className="reviews-disclaimer">Trechos de avaliações de clientes exibidas nas páginas dos respectivos produtos na loja oficial.</p>
+      <p className="reviews-disclaimer">Trechos de avaliações publicadas nas páginas oficiais dos respectivos produtos. Confira o contexto completo na loja original.</p>
     </section>
   );
 }
