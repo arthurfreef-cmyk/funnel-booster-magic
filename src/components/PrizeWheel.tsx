@@ -30,9 +30,9 @@ const CY = 110;
 const R = 100;
 
 const TONE_FILL: Record<Prize["tone"], string> = {
-  light: "#f8f1df",
-  dark: "#171717",
-  win: "#d6b365",
+  light: "#fff1f7",
+  dark: "#101010",
+  win: "#ec2d7f",
 };
 
 /** Converte ângulo (graus, 0 = topo, sentido horário) em coordenada no disco. */
@@ -203,11 +203,11 @@ export function PrizeWheel() {
             <g clipPath="url(#wheel-clip)">
               {slices.map(({ prize, index, center, d }) => (
                 <g key={prize.label}>
-                  <path d={d} fill={TONE_FILL[prize.tone]} stroke="#b58a35" strokeWidth={1.2} />
+                  <path d={d} fill={TONE_FILL[prize.tone]} stroke="#ec2d7f" strokeWidth={1.2} />
                   {/* Rótulo radial: ocupa o comprimento da fatia, nunca invade a vizinha. */}
                   <g transform={`rotate(${center - 90} ${CX} ${CY})`}>
                     <text
-                      className={prize.tone === "win" ? "wheel-text wheel-text-win" : "wheel-text"}
+                      className={prize.tone === "win" ? "wheel-text wheel-text-win" : prize.tone === "dark" ? "wheel-text wheel-text-dark" : "wheel-text"}
                       dominantBaseline="middle"
                       lengthAdjust="spacingAndGlyphs"
                       textAnchor="end"
@@ -221,13 +221,13 @@ export function PrizeWheel() {
                   <circle
                     cx={point(index * SEGMENT, R - 6)[0]}
                     cy={point(index * SEGMENT, R - 6)[1]}
-                    fill="#d6b365"
+                    fill="#ec2d7f"
                     r={2.4}
                   />
                 </g>
               ))}
             </g>
-            <circle cx={CX} cy={CY} fill="#171717" r={20} stroke="#d6b365" strokeWidth={3} />
+            <circle cx={CX} cy={CY} fill="#ec2d7f" r={20} stroke="#101010" strokeWidth={3} />
             <text className="wheel-hub" textAnchor="middle" x={CX} y={CY + 4}>
               wepink
             </text>
