@@ -370,10 +370,21 @@ function CheckoutRoute() {
       </nav>
 
       <div className="checkout-head">
-        <Link className="checkout-home-button" to="/">
-          <Home aria-hidden size={16} />
-          <span>voltar ao início</span>
-        </Link>
+        {step === 1 ? (
+          <Link className="checkout-home-button" to="/">
+            <Home aria-hidden size={16} />
+            <span>voltar às compras</span>
+          </Link>
+        ) : (
+          <button
+            className="checkout-home-button"
+            type="button"
+            onClick={() => goTo((step - 1) as 1 | 2 | 3)}
+          >
+            <span aria-hidden>←</span>
+            <span>voltar à etapa anterior</span>
+          </button>
+        )}
         <h1>checkout seguro</h1>
         <p className="checkout-steps-hint">
           <Lock aria-hidden size={14} /> ambiente criptografado · leva menos de 1 minuto
