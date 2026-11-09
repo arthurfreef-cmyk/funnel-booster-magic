@@ -1,184 +1,187 @@
-/* Black Friday visual layer — preserves existing copy, catalog data and prices. */
+/* Wepink x Black Friday — pink remains the brand hero; black is the campaign contrast. */
 :root {
-  --pink: #b58a35;
-  --pink-dark: #8d6720;
-  --pink-soft: #f7f1e4;
-  --ink: #151515;
-  --muted: #686868;
-  --line: #e7e0d2;
+  --pink: #ec2d7f;
+  --pink-dark: #d81e6c;
+  --pink-soft: #fff1f7;
+  --ink: #101010;
+  --muted: #737373;
+  --line: #e8e8e8;
   --page: #fff;
 }
 
-.announcement {
-  color: #f7e6b5;
-  background: #111;
-  border-bottom: 1px solid #b58a35;
+.announcement,
+.mobile-announcement {
+  color: #fff;
+  background: #101010;
+  border-bottom: 3px solid var(--pink);
   font-weight: 700;
 }
-.announcement a { color: #f4d78e; }
+.announcement a { color: #ff8fbd; }
 .site-header {
   background: #fff;
-  box-shadow: 0 3px 18px #17120a12;
-  border-bottom: 1px solid #e8dfce;
+  box-shadow: 0 2px 12px #00000010;
+  border-bottom: 1px solid #f3dce6;
 }
 .category-nav a { transition: color .18s ease; }
 .category-nav a:hover,
-.category-nav a:focus-visible { color: #9b7126; }
+.category-nav a:focus-visible { color: var(--pink); }
 
-.slider-dots button.active { background: #b58a35; }
-.slider-dots button { background: #d7c9a9; }
+.slider-dots button.active { background: var(--pink); }
+.slider-dots button { background: #e8c6d5; }
 
 .home-section > h1,
 .home-section > h2,
 .instagram-section h2 {
-  color: #171717;
-  letter-spacing: -.045em;
+  color: var(--pink);
+  letter-spacing: -.04em;
 }
 .home-section > h2::after,
 .instagram-section h2::after {
   content: "";
   display: block;
-  width: 54px;
+  width: 48px;
   height: 3px;
-  margin: 16px auto 0;
+  margin: 15px auto 0;
   border-radius: 3px;
-  background: linear-gradient(90deg, #8d6720, #e4c77e);
+  background: var(--pink);
 }
 
 .product-card {
   padding: 0 0 14px;
-  border: 1px solid #eee8dc;
+  border: 1px solid #f0e5ea;
   border-radius: 12px;
   overflow: hidden;
   background: #fff;
-  box-shadow: 0 5px 18px #1b160b08;
+  box-shadow: 0 4px 16px #1610160a;
   transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
 }
 .product-card:hover {
   transform: translateY(-3px);
-  border-color: #d7c18f;
-  box-shadow: 0 12px 28px #1b160b14;
+  border-color: #f2a5c5;
+  box-shadow: 0 10px 25px #d81e6c18;
 }
-.product-image-link { background: linear-gradient(145deg, #fff, #faf8f2); }
+.product-image-link { background: linear-gradient(145deg, #fff, #fff7fa); }
 .product-copy { padding: 12px 13px 0; }
-.product-copy h3 { color: #171717; }
-.product-description { color: #686868; }
+.product-copy h3 { color: #101010; }
+.product-description { color: #737373; }
 .product-actions { padding: 0 13px; }
 .marketing-discount-badge {
-  color: #f7e6b5;
-  background: linear-gradient(145deg, #26231d, #090909);
-  border: 2px solid #c9a65b;
-  box-shadow: 0 5px 16px #0003;
+  color: #fff;
+  background: linear-gradient(145deg, #ff3e8e, #d90061);
+  border: 2px solid #fff;
+  box-shadow: 0 5px 15px #cd005a35;
 }
 .buy-button,
 .checkout-button {
-  color: #f7e6b5;
-  background: linear-gradient(135deg, #171717, #050505);
-  border: 1px solid #b58a35;
-  box-shadow: 0 4px 12px #00000018;
+  color: #fff;
+  background: var(--pink);
+  border: 1px solid var(--pink);
+  box-shadow: 0 4px 12px #ec2d7f22;
   transition: transform .18s ease, background .18s ease, box-shadow .18s ease;
 }
 .buy-button:hover,
 .checkout-button:hover {
-  color: #fff3cf;
-  background: linear-gradient(135deg, #3a3020, #111);
-  border-color: #dfbd70;
-  box-shadow: 0 7px 18px #0003;
+  color: #fff;
+  background: var(--pink-dark);
+  border-color: var(--pink-dark);
+  box-shadow: 0 7px 18px #d81e6c30;
   transform: translateY(-1px);
 }
 .quick-add {
-  color: #8d6720;
-  border-color: #b58a35;
+  color: var(--pink);
+  border-color: var(--pink);
 }
-.quick-add:hover { background: #f7f1e4; }
+.quick-add:hover { background: var(--pink-soft); }
 
 .featured-copy {
-  color: #f8f0df;
-  background: linear-gradient(145deg, #24211a, #080808 78%);
-  border: 1px solid #b58a35;
+  color: #fff;
+  background: linear-gradient(145deg, #ec2d7f, #d81e6c);
+  border: 1px solid #ec2d7f;
 }
 .featured-copy a {
-  color: #f4d78e;
-  border-color: #c9a65b;
+  color: #fff;
+  border-color: #fff;
 }
 .featured-copy a:hover {
-  color: #171717;
-  background: #e5c77d;
+  color: var(--pink);
+  background: #fff;
 }
 
 .newsletter-section {
-  color: #f8f0df;
-  background: linear-gradient(110deg, #090909, #272117);
-  border-top: 1px solid #b58a35;
-  border-bottom: 1px solid #b58a35;
+  color: #fff;
+  background: linear-gradient(110deg, #d81e6c, #ec2d7f);
+  border-top: 3px solid #101010;
+  border-bottom: 3px solid #101010;
 }
 .newsletter-section form button {
-  color: #17130b;
-  background: linear-gradient(135deg, #f0d38d, #b58a35);
+  color: #fff;
+  background: #101010;
 }
-.newsletter-section form button:hover { filter: brightness(1.06); }
+.newsletter-section form button:hover { background: #292929; }
 .newsletter-section input:focus {
-  box-shadow: 0 0 0 2px #d7b66b;
+  box-shadow: 0 0 0 3px #ffffff70;
 }
 
 .site-footer {
-  color: #f4ead2;
-  background: #101010;
-  border-color: #b58a35;
+  color: #fff;
+  background: #ec2d7f;
+  border-color: #d81e6c;
 }
-.legal-copy { color: #cfc4ad; background: #101010; }
-.footer-policies { border-color: #55472b; }
-.footer-links a:hover { color: #e3c47d; }
-.back-to-top span { color: #17130b; background: #d9bd79; }
+.legal-copy { color: #fff; background: #d81e6c; }
+.footer-policies { border-color: #ffffff55; }
+.footer-links a:hover { color: #ffe0ec; }
+.back-to-top span { color: #fff; background: #101010; }
 
-.wheel-layer { background: #080808cc; }
+.wheel-layer { background: #101010bd; }
 .wheel-modal {
-  color: #f5ecd8;
-  background: radial-gradient(circle at 50% 0%, #302719 0, #171510 48%, #0c0c0b 100%);
-  border: 1px solid #c5a45d;
+  color: #101010;
+  background: linear-gradient(160deg, #fff 0%, #fff5f9 100%);
+  border: 2px solid var(--pink);
   border-radius: 22px;
-  box-shadow: 0 26px 90px #0009, 0 0 0 4px #c5a45d18;
+  box-shadow: 0 24px 80px #0007, 0 0 0 5px #ec2d7f20;
 }
-.wheel-modal h2 { color: #f0d38d; }
+.wheel-modal h2 { color: var(--pink); }
 .wheel-subtitle,
-.wheel-proof { color: #d1c6ae; }
-.wheel-modal small { color: #a99d84; }
+.wheel-proof { color: #555; }
+.wheel-modal small { color: #777; }
 .wheel-trust {
-  color: #241b0b;
-  background: linear-gradient(135deg, #f3dda5, #b58a35);
+  color: #fff;
+  background: #101010;
+  border-bottom: 2px solid var(--pink);
 }
 .wheel-stage {
   width: min(78vw, 270px);
-  filter: drop-shadow(0 12px 22px #0008);
+  filter: drop-shadow(0 10px 18px #d81e6c20);
 }
-.wheel-text { fill: #b58a35; }
-.wheel-text-win { fill: #171717; }
-.wheel-hub { fill: #e4c77e; }
+.wheel-text { fill: #101010; }
+.wheel-text-dark { fill: #fff; }
+.wheel-text-win { fill: #fff; }
+.wheel-hub { fill: #fff; }
 .wheel-disc {
-  border: 6px solid #c5a45d;
-  box-shadow: 0 0 0 5px #c5a45d20, 0 12px 30px #0008;
+  border: 6px solid var(--pink);
+  box-shadow: 0 0 0 5px #ec2d7f16, 0 10px 26px #0002;
 }
 .wheel-pointer {
-  border-top-color: #e7c777;
-  filter: drop-shadow(0 3px 4px #0008);
+  border-top-color: var(--pink);
+  filter: drop-shadow(0 3px 4px #0004);
 }
 .wheel-result {
-  color: #f5ecd8;
-  background: #2a2418;
-  border: 1px solid #a98742;
+  color: #101010;
+  background: var(--pink-soft);
+  border: 1px solid #f3a2c3;
 }
-.wheel-dot { background: #d8b968; }
+.wheel-dot { background: var(--pink); }
 .wheel-modal .checkout-button {
   min-height: 50px;
-  color: #211a0c;
-  background: linear-gradient(135deg, #f2d996, #b58a35);
-  border: 1px solid #f0d38d;
+  color: #fff;
+  background: var(--pink);
+  border: 1px solid var(--pink);
   font-size: 14px;
-  letter-spacing: .02em;
+  letter-spacing: .01em;
 }
 .wheel-modal .checkout-button:hover {
-  color: #17130b;
-  background: linear-gradient(135deg, #ffe8ad, #c69a43);
+  color: #fff;
+  background: var(--pink-dark);
 }
 .wheel-modal .checkout-button:disabled {
   opacity: .72;
@@ -186,11 +189,6 @@
 }
 
 @media (max-width: 760px) {
-  .mobile-announcement {
-    color: #f7e6b5;
-    background: #111;
-    border-bottom: 1px solid #b58a35;
-  }
   .product-card { border-radius: 10px; }
   .product-copy { padding: 10px 10px 0; }
   .product-actions { padding: 0 10px; }
