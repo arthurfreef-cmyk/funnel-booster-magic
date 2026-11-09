@@ -11,6 +11,7 @@ import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/format";
 import { createPixPayment, type PixResult } from "@/lib/pix.functions";
 import { trackInitiateCheckout, trackPurchase } from "@/lib/pixels";
+import { OptionalAccount } from "@/components/OptionalAccount";
 
 
 export const Route = createFileRoute("/checkout")({
@@ -78,6 +79,14 @@ function CheckoutRoute() {
   const formRef = useRef<HTMLFormElement>(null);
   const cepAbortRef = useRef<AbortController | null>(null);
   const bumpAdded = items.some((item) => item.slug === ORDER_BUMP.slug);
+
+  const handleOptionalAccount = (user: { email?: string; user_metadata?: { full_name?: string; name?: string } }) => {
+    setForm((current) => ({
+      ...current,
+      name: current.name || user.user_metadata?.full_name || user.user_metadata?.name || "",
+      email: current.email || user.email || "",
+    }));
+  };
 
 
   // Reaproveita o CEP/endereço simulado no carrinho.
@@ -483,6 +492,7 @@ function CheckoutRoute() {
 
             {step === 2 && (
             <>
+            <OptionalAccount onAuthenticated={handleOptionalAccount} />
             <section className="checkout-form-section">
 
               <div className="checkout-form-heading">
