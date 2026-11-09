@@ -101,25 +101,25 @@ function Newsletter() {
 function CustomerReviews() {
   const videos = [
     {
-      id: "RuFnJATBkjQ",
-      title: "Resenha Body Splash Obsessed",
-      creator: "Stephanie Feitosa",
-      product: "Body Splash Obsessed",
-      description: "Teste de aroma, fixação e impressões de uso. O vídeo aborda o Obsessed a partir de 2min53s.",
+      id: "Fyy4a8guutA",
+      title: "Resenha Body Splash Obsessed Deluxe",
+      creator: "Thati Peliciolli",
+      product: "Obsessed Deluxe",
+      description: "Resenha dedicada ao Body Splash Obsessed Deluxe, com primeiras impressões da fragrância.",
     },
     {
-      id: "HbCFJfRUyMY",
-      title: "Avaliando body splashes da Wepink",
-      creator: "Jessica Morais",
-      product: "Linha Body Splash",
-      description: "Opinião e avaliação em vídeo de diferentes fragrâncias da marca.",
+      id: "MRZK9SiRjag",
+      title: "Primeiras impressões Obsessed Gold",
+      creator: "Bianca Souza",
+      product: "Obsessed Gold",
+      description: "Avaliação em vídeo do Body Splash Obsessed Gold.",
     },
     {
-      id: "NCocwAA-yWI",
-      title: "Testando o VF Golden",
-      creator: "Thaís Verônica",
-      product: "VF Golden",
-      description: "Impressões em vídeo sobre a fragrância VF Golden.",
+      id: "weHUhB4knVs",
+      title: "Resenha Body Splash Changes",
+      creator: "Cris Nascimento",
+      product: "Body Splash Changes",
+      description: "Resenha em vídeo sobre o Body Splash Changes da Wepink.",
     },
   ];
 
@@ -153,7 +153,7 @@ function CustomerReviews() {
           </article>
         ))}
       </div>
-      <p className="reviews-disclaimer">Conteúdos de terceiros incorporados a partir do YouTube. As opiniões são dos respectivos criadores e não representam garantia de resultado nem publicidade oficial da loja.</p>
+      <p className="reviews-disclaimer">Conteúdos de terceiros incorporados a partir do YouTube. As opiniões são dos respectivos criadores e não representam publicidade oficial da loja.</p>
     </section>
   );
 }
