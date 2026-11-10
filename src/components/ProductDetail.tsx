@@ -8,6 +8,7 @@ import { BADGE_BEST_SELLER, BADGE_LANCAMENTO, PRODUCTS, type Product } from "@/d
 import { useCart } from "@/lib/cart";
 import { discountPercent, formatPrice, installment } from "@/lib/format";
 import { markVisited } from "@/lib/product-visit";
+import { trackViewContent } from "@/lib/pixels";
 
 export interface ProductDetailProps {
   product: Product;
@@ -28,6 +29,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
   // Registra a visita à página do produto (pré-requisito para o checkout).
   useEffect(() => {
     markVisited(product.slug);
+    trackViewContent({ name: product.name, slug: product.slug, price: product.price, category: product.category });
   }, [product.slug]);
 
   const discount = discountPercent(product.listPrice, product.price);
