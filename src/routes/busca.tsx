@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { ProductCard } from "@/components/ProductCard";
 import { PRODUCTS } from "@/data/site";
+import { trackSearch } from "@/lib/pixels";
 
 const PAGE_SIZE = 12;
 
@@ -26,6 +27,10 @@ export const Route = createFileRoute("/busca")({
 function SearchRoute() {
   const { q } = Route.useSearch();
   const [visible, setVisible] = useState(PAGE_SIZE);
+
+  useEffect(() => {
+    if (q.trim()) trackSearch(q, results.length);
+  }, [q, results.length]);
 
   const results = useMemo(() => {
     const term = q.trim().toLowerCase();
