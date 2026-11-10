@@ -117,7 +117,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <head>
         <HeadContent />
       </head>
@@ -128,7 +128,7 @@ function RootShell({ children }: { children: ReactNode }) {
             height={1}
             width={1}
             style={{ display: "none" }}
-            src="https://www.facebook.com/tr?id=2505633886593330&ev=PageView&noscript=1"
+            src="https://www.facebook.com/tr?id=3347262455471701&ev=PageView&noscript=1"
             alt=""
           />
         </noscript>
