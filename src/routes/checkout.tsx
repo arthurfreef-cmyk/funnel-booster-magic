@@ -10,7 +10,7 @@ import { ORDER_BUMP } from "@/data/site";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/format";
 import { createPixPayment, type PixResult } from "@/lib/pix.functions";
-import { trackInitiateCheckout, trackPurchase } from "@/lib/pixels";
+import { trackAddPaymentInfo, trackInitiateCheckout, trackPurchase } from "@/lib/pixels";
 import { OptionalAccount } from "@/components/OptionalAccount";
 
 
@@ -296,7 +296,6 @@ function CheckoutRoute() {
       setCardOpen(true);
       return;
     }
-    trackInitiateCheckout(effectiveTotal, items);
     setLoading(true);
     try {
       const result = await createPixPayment({
@@ -325,6 +324,7 @@ function CheckoutRoute() {
           })),
         },
       });
+      trackAddPaymentInfo(effectiveTotal, items, "pix");
       setPayment(result);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível gerar o PIX. Tente novamente.");
@@ -334,7 +334,7 @@ function CheckoutRoute() {
   };
 
   const onPaid = () => {
-    trackPurchase(effectiveTotal, items);
+    trackPurchase(effectiveTotal, items, payment?.id);
     clear();
     void navigate({ to: "/obrigado" });
   };
